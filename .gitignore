@@ -1,0 +1,19 @@
+# Local dev environment config folder
+.idea
+.vscode
+
+# Local virtual environment folder
+# If you use a different one remember to add it to this file
+_venv
+
+# MacOS specific
+.DS_Store
+
+# Data files.
+# Must be version controlled in DVC.
+*.csv
+*.geojson
+*.pkl
+*.parquet
+*.xls
+*.xlsx

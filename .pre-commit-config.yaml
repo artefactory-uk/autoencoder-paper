@@ -1,0 +1,52 @@
+---
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.2.0
+  hooks:
+    # Non modifying hooks
+  - id: check-added-large-files
+  - id: check-yaml
+  - id: check-ast
+  - id: check-builtin-literals
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-toml
+  - id: check-vcs-permalinks
+  - id: check-executables-have-shebangs
+  - id: check-merge-conflict
+  - id: debug-statements
+  - id: detect-private-key
+    # Modifying hooks
+  - id: requirements-txt-fixer
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+- repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+  rev: 0.1.1
+  hooks:
+  - id: yamlfmt
+    args: [--mapping, '2', --sequence, '2', --offset, '0', --width, '150']
+- repo: https://github.com/pre-commit/pygrep-hooks
+  rev: v1.9.0
+  hooks:
+  - id: python-no-eval
+  - id: python-no-log-warn
+
+# Update the version of python as necessary per project
+# Try to use the latest python if possible
+- repo: https://github.com/asottile/pyupgrade
+  rev: v2.32.0
+  hooks:
+  - id: pyupgrade
+    args: [--py39-plus]
+
+# Keep last to ensure formatting happens after all other fixes
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+  - id: black
+  - id: black-jupyter
+
+- repo: https://github.com/arcablanca/pre-commit-hooks
+  rev: v1
+  hooks:
+  - id: check-git-user-email
