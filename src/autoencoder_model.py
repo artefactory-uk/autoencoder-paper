@@ -3,7 +3,6 @@ import numpy as np
 from math import ceil
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import matplotlib.backends.backend_pdf
 from tensorflow.keras import layers, optimizers
 
 
@@ -146,7 +145,7 @@ def train_autoencoder(
         FIRST_LAYER_SIZE, no_of_features, nodesize, initialiser, run_type
     )
 
-    optimizer = optimizers.Adam(learning_rate=learning_rate)
+    optimizer = optimizers.SGD(learning_rate=learning_rate,momentum=0.0)
     autoencoder.compile(optimizer=optimizer, loss="mae")
 
     history = autoencoder.fit(
@@ -177,51 +176,6 @@ def train_autoencoder(
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
-
-    def print_features_pdf(model, input_df, type, run_name):
-        input_array = input_df.to_numpy()
-        encoded_data = model.encoder(input_array).numpy()
-        decoded_data = model.decoder(encoded_data).numpy()
-
-        pdf = matplotlib.backends.backend_pdf.PdfPages(
-            f"{autoencoder_folder}/autoencoder_{type}_{run_name}.pdf"
-        )
-        no_of_features_to_look_at = len(input_df.columns)
-
-        mae = []
-        for feature in range(no_of_features_to_look_at):
-            mae.append(
-                np.abs(
-                    np.subtract(input_array[:, feature], decoded_data[:, feature])
-                ).mean()
-            )
-
-        mae_df = pd.DataFrame(
-            list(zip(input_df.columns, list(range(no_of_features_to_look_at)), mae)),
-            columns=["feature_name", "feature_number", "MAE"],
-        )
-
-        for index, row in mae_df.sort_values("MAE", ascending=False).iterrows():
-            feature_number = row["feature_number"]
-            feature_name = row["feature_name"]
-            MAE = row["MAE"]
-            if True:
-                fig, ax = plt.subplots(1, 1)
-                ax = plt.scatter(
-                    input_array[:, feature_number], decoded_data[:, feature_number]
-                )
-                plt.title(feature_name + f" ({type})\nMAE: {round(MAE,3)}")
-                plt.xlim(0, 1)
-                plt.ylim(0, 1)
-                plt.xlabel("input")
-                plt.ylabel("decoded output")
-                pdf.savefig(fig)
-        pdf.close()
-
-    print_pdf_with_feature_reconstruction_plots = False
-    if print_pdf_with_feature_reconstruction_plots:
-        print_features_pdf(autoencoder, train_data_df, "train", run_name)
-        print_features_pdf(autoencoder, test_data_df, "test", run_name)
 
 
 def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
@@ -256,7 +210,7 @@ def run_autoencoder(autoencoder_folder, data):
     return autoencoder.predict(data)
 
 
-def run_experiments_batch1(train, test, run_type, experiment_path):
+def run_experiments(train, test, run_type, experiment_path):
     train_data_df, test_data_df = train, test
     print(experiment_path)
     for key in INITIALISER_DICT:
@@ -272,7 +226,7 @@ def run_experiments_batch1(train, test, run_type, experiment_path):
         )
 
 
-def process_experiments_batch1(name="", experiment_path=""):
+def process_experiments(name="", experiment_path=""):
     list_of_runs = []
     try:
         for key in INITIALISER_DICT:

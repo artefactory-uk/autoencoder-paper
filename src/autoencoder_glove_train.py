@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import autoencoder_model as ae
+from autoencoder_model import run_experiments, process_experiments
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
 from paths import GLOVE_DATA_BASE_PATH, GLOVE_EXPERIMENT_PATH
@@ -62,8 +62,8 @@ def run_glove():
         shuffle_glove_twitter_data[sample_size + 1: (sample_size + 1) * 2],
     )
 
-    ae.run_experiments_batch1(train_set, test_set, run_type=run_type, experiment_path=GLOVE_EXPERIMENT_PATH)
-    ae.process_experiments_batch1(name=file_name, experiment_path=GLOVE_EXPERIMENT_PATH)
+    run_experiments(train_set, test_set, run_type=run_type, experiment_path=GLOVE_EXPERIMENT_PATH)
+    process_experiments(name=file_name, experiment_path=GLOVE_EXPERIMENT_PATH)
 
 
 if __name__ == "__main__":
