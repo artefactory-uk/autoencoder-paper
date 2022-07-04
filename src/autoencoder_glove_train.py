@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from autoencoder_model import run_experiments, process_experiments
+from autoencoder_model import run_experiments, process_experiments, set_seeds
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
 from paths import GLOVE_DATA_BASE_PATH, GLOVE_EXPERIMENT_PATH
@@ -47,7 +47,8 @@ def load_glove_model(File, cache=False):
     print(f"{len(glove_model)} words loaded!")
     return glove_model
 
-def run_glove():
+def run_glove(seed):
+    set_seeds(seed)
     file_name = "glove.twitter.27B.100d"
     file_extension = ".txt"
     glove_twitter_data = load_glove_model(
@@ -62,9 +63,9 @@ def run_glove():
         shuffle_glove_twitter_data[sample_size + 1: (sample_size + 1) * 2],
     )
 
-    run_experiments(train_set, test_set, run_type=run_type, experiment_path=GLOVE_EXPERIMENT_PATH)
+    run_histories = run_experiments(train_set, test_set, run_type=run_type, experiment_path=GLOVE_EXPERIMENT_PATH)
     process_experiments(name=file_name, experiment_path=GLOVE_EXPERIMENT_PATH)
-
+    return run_histories
 
 if __name__ == "__main__":
     run_glove()

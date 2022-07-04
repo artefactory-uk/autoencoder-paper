@@ -6,7 +6,11 @@ import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 
 
-tf.random.set_seed(0)
+
+def set_seeds(x):
+    np.random.seed(x)
+    tf.random.set_seed(x)
+
 FIRST_LAYER_SIZE = 64
 STRADDLED = True
 
@@ -176,6 +180,7 @@ def train_autoencoder(
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
+    return history
 
 
 def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
@@ -213,17 +218,20 @@ def run_autoencoder(autoencoder_folder, data):
 def run_experiments(train, test, run_type, experiment_path):
     train_data_df, test_data_df = train, test
     print(experiment_path)
+    run_histories = []
     for key in INITIALISER_DICT:
-        train_autoencoder(
+        history = train_autoencoder(
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=50,
+            no_of_epochs=20,
             learning_rate=0.001,
             nodesize=32,
             initialiser=key,
             run_type=run_type,
         )
+        run_histories.append((key,history))
+    return run_histories
 
 
 def process_experiments(name="", experiment_path=""):
