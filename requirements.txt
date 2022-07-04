@@ -1,1 +1,6 @@
-dvc[s3]==2.10.1
+pandas~=1.4.3
+numpy~=1.19.5
+matplotlib~=3.5.2
+tensorflow~=2.4.1
+sklearn~=0.0
+scikit-learn~=1.1.1
