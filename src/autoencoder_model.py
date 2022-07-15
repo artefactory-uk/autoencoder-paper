@@ -6,30 +6,32 @@ import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 
 
-
 def set_seeds(x):
     np.random.seed(x)
     tf.random.set_seed(x)
+
 
 FIRST_LAYER_SIZE = 64
 STRADDLED = True
 
 INITIALISER_DICT = {
     "straddled": "straddled",
+    "identity": tf.keras.initializers.Identity(),
     "glorotnormal": tf.keras.initializers.GlorotNormal(),
     "glorotuniform": tf.keras.initializers.GlorotUniform(),
     "henormal": tf.keras.initializers.HeNormal(),
     "heuniform": tf.keras.initializers.HeUniform(),
-    "identity": tf.keras.initializers.Identity(),
     "orthogonal": tf.keras.initializers.Orthogonal(),
     "random": tf.keras.initializers.RandomNormal(),
 }
+
 
 def straddled_matrix(shape1, shape2):
     small_matrix = np.identity(shape2)
     matrix = small_matrix
     for i in range(ceil(shape1 / shape2)):
         matrix = np.concatenate((matrix, small_matrix), axis=0)
+    print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
     return matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
 
 
@@ -124,8 +126,8 @@ def train_autoencoder(
     train_data_df,
     test_data_df,
     autoencoder_folder,
-    no_of_epochs=50,
-    learning_rate=0.001,
+    no_of_epochs=200,
+    learning_rate=0.0005,
     nodesize=32,
     initialiser="straddled",
     run_type="all_layers",
@@ -224,7 +226,7 @@ def run_experiments(train, test, run_type, experiment_path):
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=20,
+            no_of_epochs=200,
             learning_rate=0.001,
             nodesize=32,
             initialiser=key,

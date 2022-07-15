@@ -56,7 +56,7 @@ def run_glove(seed):
         cache=True
     )
     run_type = "no_batching"
-    sample_size = 20000
+    sample_size = 10000
     shuffle_glove_twitter_data = shuffle(glove_twitter_data)
     train_set, test_set = (
         shuffle_glove_twitter_data[:sample_size],
