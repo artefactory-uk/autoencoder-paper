@@ -138,8 +138,14 @@ def train_autoencoder(
     - any other string: use to mark experiment
     """
 
-    train_data = train_data_df.to_numpy()
-    test_data = test_data_df.to_numpy()
+    try:
+        train_data = train_data_df.to_numpy()
+        test_data = test_data_df.to_numpy()
+    except AttributeError as e:
+        print(f'Data is already in np form: {e}')
+        train_data = train_data_df
+        test_data = test_data_df
+
 
     train_data = tf.cast(train_data, tf.float32)
     test_data = tf.cast(test_data, tf.float32)
@@ -226,7 +232,7 @@ def run_experiments(train, test, run_type, experiment_path):
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=200,
+            no_of_epochs=100,
             learning_rate=0.001,
             nodesize=32,
             initialiser=key,
