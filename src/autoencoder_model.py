@@ -5,18 +5,21 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 
+def set_seeds(x):
+    np.random.seed(x)
+    tf.random.set_seed(x)
 
-tf.random.set_seed(0)
+
 FIRST_LAYER_SIZE = 64
 STRADDLED = True
 
 INITIALISER_DICT = {
     "straddled": "straddled",
+    "identity": tf.keras.initializers.Identity(),
     "glorotnormal": tf.keras.initializers.GlorotNormal(),
     "glorotuniform": tf.keras.initializers.GlorotUniform(),
     "henormal": tf.keras.initializers.HeNormal(),
     "heuniform": tf.keras.initializers.HeUniform(),
-    "identity": tf.keras.initializers.Identity(),
     "orthogonal": tf.keras.initializers.Orthogonal(),
     "random": tf.keras.initializers.RandomNormal(),
 }
@@ -26,6 +29,8 @@ def straddled_matrix(shape1, shape2):
     matrix = small_matrix
     for i in range(ceil(shape1 / shape2)):
         matrix = np.concatenate((matrix, small_matrix), axis=0)
+
+    print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
     return matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
 
 
@@ -120,8 +125,9 @@ def train_autoencoder(
     train_data_df,
     test_data_df,
     autoencoder_folder,
-    no_of_epochs=50,
-    learning_rate=0.001,
+
+    no_of_epochs=200,
+    learning_rate=0.0005,
     nodesize=32,
     initialiser="straddled",
     run_type="all_layers",
@@ -177,6 +183,7 @@ def train_autoencoder(
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
 
+    return history
 
 def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
     runs_dict = {}
@@ -213,18 +220,21 @@ def run_autoencoder(autoencoder_folder, data):
 def run_experiments(train, test, run_type, experiment_path):
     train_data_df, test_data_df = train, test
     print(experiment_path)
+    run_histories = []
     for key in INITIALISER_DICT:
-        train_autoencoder(
+        history = train_autoencoder(
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=50,
+            no_of_epochs=200,
             learning_rate=0.001,
             nodesize=32,
             initialiser=key,
             run_type=run_type,
         )
 
+        run_histories.append((key,history))
+    return run_histories
 
 def process_experiments(name="", experiment_path=""):
     list_of_runs = []

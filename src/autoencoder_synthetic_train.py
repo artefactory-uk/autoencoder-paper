@@ -5,7 +5,8 @@ from paths import SYNTHETIC_EXPERIMENT_PATH
 
 from src.autoencoder_helper_functions import scale_dataset
 from src.autoencoder_model import (
-    train_autoencoder,
+    set_seeds,
+    run_experiments,
     INITIALISER_DICT,
     create_outputs_for_runs,
 )
@@ -68,19 +69,9 @@ def run_experiments_synthetic():
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
+    histories = run_experiments(train_data_df, test_data_df, run_type, SYNTHETIC_EXPERIMENT_PATH)
 
-    for key in INITIALISER_DICT:
-        train_autoencoder(
-            train_data_df,
-            test_data_df,
-            SYNTHETIC_EXPERIMENT_PATH,
-            no_of_epochs=50,
-            learning_rate=0.001,
-            nodesize=32,
-            initialiser=key,
-            run_type=run_type,
-        )
-
+    return histories
 
 def process_experiments_synthetic():
     list_of_runs = []
@@ -93,9 +84,12 @@ def process_experiments_synthetic():
         SYNTHETIC_EXPERIMENT_PATH
     )
 
-def run_synthetic():
-    run_experiments_synthetic()
+
+def run_synthetic(seed):
+    set_seeds(seed)
+    run_histories = run_experiments_synthetic()
     process_experiments_synthetic()
+    return run_histories
 
 if __name__ == "__main__":
     run_synthetic()

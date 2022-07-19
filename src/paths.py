@@ -3,3 +3,4 @@ GLOVE_EXPERIMENT_PATH = "../experiments/glove/"
 
 SYNTHETIC_EXPERIMENT_PATH = "../experiments/synthetic/"
 
+CI_EXPERIMENT_PATH = "../experiments/CI/"
