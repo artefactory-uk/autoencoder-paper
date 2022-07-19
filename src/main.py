@@ -1,10 +1,12 @@
 import autoencoder_glove_train as glove
+
 import confidence_intervals
 import autoencoder_synthetic_train as synthetic
 
 '''
 End to end pipeline for running the autoencoder on both the synthetic and glove data
 '''
+
 synthetic_name = "Glove Data"
 if __name__ == "__main__":
     NUM_TESTS = 3
