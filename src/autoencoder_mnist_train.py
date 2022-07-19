@@ -22,4 +22,4 @@ def run_mnist(seed):
     return run_histories
 
 if __name__ == "__main__":
-    run_mnist()
+    run_mnist(seed = 1)

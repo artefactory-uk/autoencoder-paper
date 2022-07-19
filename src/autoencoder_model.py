@@ -31,8 +31,8 @@ def straddled_matrix(shape1, shape2):
     matrix = small_matrix
     for i in range(ceil(shape1 / shape2)):
         matrix = np.concatenate((matrix, small_matrix), axis=0)
-    print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
-    return matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
+    # print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
+    return matrix[:shape1, :] #+ abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
 
 
 class AnomalyDetector(tf.keras.Model):
