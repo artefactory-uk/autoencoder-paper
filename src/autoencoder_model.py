@@ -4,6 +4,11 @@ from math import ceil
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers
+from tensorflow.keras.losses import mean_squared_error
+import tensorflow.keras.backend as K
+
+def root_mean_squared_error(y_true, y_pred):
+    return K.sqrt(mean_squared_error(y_true, y_pred))
 
 def set_seeds(x):
     np.random.seed(x)
@@ -24,15 +29,31 @@ INITIALISER_DICT = {
     "random": tf.keras.initializers.RandomNormal(),
 }
 
-def straddled_matrix(shape1, shape2):
-    small_matrix = np.identity(shape2)
-    matrix = small_matrix
-    for i in range(ceil(shape1 / shape2)):
-        matrix = np.concatenate((matrix, small_matrix), axis=0)
 
-    print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
-    return matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
+def straddled_matrix(shape1, shape2, add_glorot = False, symmetric= False):
+    initializer = tf.keras.initializers.GlorotUniform()
+    glorot_uniform = initializer(shape=(shape1, shape2))
 
+    def tall_straddled(shape1, shape2):
+      small_matrix = np.identity(shape2)
+      matrix = small_matrix
+      for i in range(ceil(shape1 / shape2)):
+          matrix = np.concatenate((matrix, small_matrix), axis=0)
+      return matrix[:shape1, :]
+
+    if symmetric:
+        if shape1 >= shape2:
+            straddled = tall_straddled(shape1,shape2)
+        else:
+            straddled = tall_straddled(shape2,shape1).T
+    else:
+        straddled = tall_straddled(shape1, shape2)
+
+    if add_glorot:
+        straddled += glorot_uniform
+        straddled = straddled.numpy()
+
+    return straddled
 
 class AnomalyDetector(tf.keras.Model):
     def __init__(
@@ -125,7 +146,6 @@ def train_autoencoder(
     train_data_df,
     test_data_df,
     autoencoder_folder,
-
     no_of_epochs=200,
     learning_rate=0.0005,
     nodesize=32,
@@ -138,8 +158,14 @@ def train_autoencoder(
     - any other string: use to mark experiment
     """
 
-    train_data = train_data_df.to_numpy()
-    test_data = test_data_df.to_numpy()
+    try:
+        train_data = train_data_df.to_numpy()
+        test_data = test_data_df.to_numpy()
+    except AttributeError as e:
+        print(f'Data is already in np form: {e}')
+        train_data = train_data_df
+        test_data = test_data_df
+
 
     train_data = tf.cast(train_data, tf.float32)
     test_data = tf.cast(test_data, tf.float32)
@@ -152,7 +178,7 @@ def train_autoencoder(
     )
 
     optimizer = optimizers.SGD(learning_rate=learning_rate,momentum=0.0)
-    autoencoder.compile(optimizer=optimizer, loss="mae")
+    autoencoder.compile(optimizer=optimizer, loss= root_mean_squared_error)
 
     history = autoencoder.fit(
         train_data,
@@ -182,8 +208,8 @@ def train_autoencoder(
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
-
     return history
+
 
 def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
     runs_dict = {}
@@ -232,9 +258,9 @@ def run_experiments(train, test, run_type, experiment_path):
             initialiser=key,
             run_type=run_type,
         )
-
         run_histories.append((key,history))
     return run_histories
+
 
 def process_experiments(name="", experiment_path=""):
     list_of_runs = []
