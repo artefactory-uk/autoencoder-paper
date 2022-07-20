@@ -16,12 +16,11 @@ class ConfidenceIntervals():
         '''
         Calculates CI for one epoch in the learning curve.
         '''
-        a = 1.0 * np.array(curve_points)
-        n = len(a)
-        m, se = np.mean(a), scipy.stats.sem(a)
-        h = se * scipy.stats.t.ppf((1 + CI) / 2., n - 1)
-        print(f'{m}, {m - h}, {m + h}')
-        return m, m - h, m + h
+        points = np.array(curve_points)
+        num_points = len(points)
+        mean, standard_error = np.mean(points), scipy.stats.sem(points)
+        lower_bound, upper_bound = scipy.stats.t.interval(CI, num_points -1, loc = mean, scale = standard_error)
+        return mean, lower_bound, upper_bound
 
     def __restruct_history(self, key):
         history_dict = dict()
