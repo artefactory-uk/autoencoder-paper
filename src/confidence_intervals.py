@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.stats
 from matplotlib import pyplot as plt
-from paths import CI_EXPERIMENT_PATH
+from src.paths import CI_EXPERIMENT_PATH
 
 class ConfidenceIntervals():
     def __init__(self, all_histories, num_experiments,name):

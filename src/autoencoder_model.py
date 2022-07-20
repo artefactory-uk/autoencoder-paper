@@ -243,7 +243,8 @@ def run_autoencoder(autoencoder_folder, data):
     return autoencoder.predict(data)
 
 
-def run_experiments(train, test, run_type, experiment_path):
+def run_experiments(train, test, run_type, experiment_path,
+                    num_epochs, lr):
     train_data_df, test_data_df = train, test
     print(experiment_path)
     run_histories = []
@@ -252,8 +253,8 @@ def run_experiments(train, test, run_type, experiment_path):
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=200,
-            learning_rate=0.001,
+            no_of_epochs=num_epochs,
+            learning_rate=lr,
             nodesize=32,
             initialiser=key,
             run_type=run_type,

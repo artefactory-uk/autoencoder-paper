@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from paths import SYNTHETIC_EXPERIMENT_PATH
+from src.paths import SYNTHETIC_EXPERIMENT_PATH
 
 from src.autoencoder_helper_functions import scale_dataset
 from src.autoencoder_model import (
@@ -65,11 +65,12 @@ def prepare_synthetic_data(data):
     return train, test
 
 
-def run_experiments_synthetic():
+def run_experiments_synthetic(num_epochs, lr):
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
-    histories = run_experiments(train_data_df, test_data_df, run_type, SYNTHETIC_EXPERIMENT_PATH)
+    histories = run_experiments(train_data_df, test_data_df, run_type, SYNTHETIC_EXPERIMENT_PATH,
+                                num_epochs=num_epochs, lr=lr)
 
     return histories
 
@@ -85,9 +86,9 @@ def process_experiments_synthetic():
     )
 
 
-def run_synthetic(seed):
+def run_synthetic(seed, num_epochs, lr):
     set_seeds(seed)
-    run_histories = run_experiments_synthetic()
+    run_histories = run_experiments_synthetic(num_epochs, lr)
     process_experiments_synthetic()
     return run_histories
 
