@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 
-
 def set_seeds(x):
     np.random.seed(x)
     tf.random.set_seed(x)
@@ -25,12 +24,12 @@ INITIALISER_DICT = {
     "random": tf.keras.initializers.RandomNormal(),
 }
 
-
 def straddled_matrix(shape1, shape2):
     small_matrix = np.identity(shape2)
     matrix = small_matrix
     for i in range(ceil(shape1 / shape2)):
         matrix = np.concatenate((matrix, small_matrix), axis=0)
+
     print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
     return matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
 
@@ -126,6 +125,7 @@ def train_autoencoder(
     train_data_df,
     test_data_df,
     autoencoder_folder,
+
     no_of_epochs=200,
     learning_rate=0.0005,
     nodesize=32,
@@ -182,8 +182,8 @@ def train_autoencoder(
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
-    return history
 
+    return history
 
 def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
     runs_dict = {}
@@ -232,9 +232,9 @@ def run_experiments(train, test, run_type, experiment_path):
             initialiser=key,
             run_type=run_type,
         )
+
         run_histories.append((key,history))
     return run_histories
-
 
 def process_experiments(name="", experiment_path=""):
     list_of_runs = []

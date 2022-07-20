@@ -73,7 +73,6 @@ def run_experiments_synthetic():
 
     return histories
 
-
 def process_experiments_synthetic():
     list_of_runs = []
     for key in INITIALISER_DICT:
@@ -84,6 +83,7 @@ def process_experiments_synthetic():
         list_of_runs, "different_initialisers_0p001lr_synthetic_100_features",
         SYNTHETIC_EXPERIMENT_PATH
     )
+
 
 def run_synthetic(seed):
     set_seeds(seed)
