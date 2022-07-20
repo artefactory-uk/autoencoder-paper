@@ -12,8 +12,9 @@ def run_mnist(seed, sample_size = 1):
     run_type = "no_batching"
     (x_train,_), (x_test,_) = mnist.load_data()
     # Normalise and flatten
-    x_train = x_train.astype('float32') / 255.
-    x_test = x_test.astype('float32') / 255.
+    IMAGE_NORM_CONST = 255.
+    x_train = x_train.astype('float32') / IMAGE_NORM_CONST
+    x_test = x_test.astype('float32') / IMAGE_NORM_CONST
     x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
     x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
     all_data = np.concatenate((x_train, x_test))
