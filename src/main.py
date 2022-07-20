@@ -5,7 +5,7 @@ import autoencoder_mnist_train as mnist
 
 
 '''
-End to end pipeline for running the autoencoder on both the synthetic and glove data
+End to end pipeline for running the autoencoder on both the synthetic, glove and MNIST data
 '''
 if __name__ == "__main__":
     NUM_TESTS = 3
@@ -22,5 +22,3 @@ if __name__ == "__main__":
 
     CIs = confidence_intervals.ConfidenceIntervals(all_histories, NUM_TESTS, name = name)
     CIs.calculate_CI_learning_curves()
-
-    # synthetic.run_synthetic()

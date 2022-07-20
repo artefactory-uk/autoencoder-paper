@@ -39,22 +39,21 @@ def straddled_matrix(shape1, shape2, add_glorot = False, symmetric= False):
       matrix = small_matrix
       for i in range(ceil(shape1 / shape2)):
           matrix = np.concatenate((matrix, small_matrix), axis=0)
-      # print(matrix[:shape1, :] + abs(np.random.normal(0, 0.001, size=(shape1, shape2))))
-      return matrix[:shape1, :] #+ abs(np.random.normal(0, 0.001, size=(shape1, shape2)))
+      return matrix[:shape1, :]
 
     if symmetric:
         if shape1 >= shape2:
-            strad = tall_straddled(shape1,shape2)
+            straddled = tall_straddled(shape1,shape2)
         else:
-            strad = tall_straddled(shape2,shape1).T
+            straddled = tall_straddled(shape2,shape1).T
     else:
-        strad = tall_straddled(shape1, shape2)
+        straddled = tall_straddled(shape1, shape2)
 
     if add_glorot:
-        strad += glorot_uniform
-        strad = strad.numpy()
-    print(strad)
-    return strad
+        straddled += glorot_uniform
+        straddled = straddled.numpy()
+
+    return straddled
 
 class AnomalyDetector(tf.keras.Model):
     def __init__(
@@ -253,8 +252,8 @@ def run_experiments(train, test, run_type, experiment_path):
             train_data_df,
             test_data_df,
             experiment_path,
-            no_of_epochs=100,
-            learning_rate=0.01,
+            no_of_epochs=200,
+            learning_rate=0.001,
             nodesize=32,
             initialiser=key,
             run_type=run_type,
