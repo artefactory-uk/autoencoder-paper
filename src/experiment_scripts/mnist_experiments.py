@@ -1,28 +1,30 @@
 import src.confidence_intervals as confidence_intervals
 import src.autoencoder_mnist_train as mnist
+import json
 
 '''
 This script runs experiments on the MNIST dataset 
 '''
-
-MNIST_CONFIG = \
-    {
-        'num_tests': 2, # How many tests for CI testing
-        'sample_size': 0.05, # How much of the data to use (1 - sample_size = validation_size)
-        'num_epochs': 2,
-        'learning_rate': 0.001
-    }
+MNIST_CONFIG_FILENAME = 'experiment_scripts/mnist_experiments_config.json'
+with open(MNIST_CONFIG_FILENAME) as config_file:
+    all_experiments = json.load(config_file)
+    all_experiments_names = all_experiments.keys()
 
 if __name__ == "__main__":
-    name = f"TEST MNIST data [old (asymmetric)straddled but now using RMSE, using {MNIST_CONFIG['sample_size'] *100}% of training data]"
 
-    seeds = list(range(MNIST_CONFIG['num_tests']))
-    all_histories = []
-    for seed in seeds:
-        # all_histories.append(glove.run_glove(seed = seed))
-        all_histories.append(mnist.run_mnist(seed = seed, sample_size=MNIST_CONFIG['sample_size'],
-                                             num_epochs=MNIST_CONFIG['num_epochs'], lr=MNIST_CONFIG['learning_rate']))
-        # all_histories.append(synthetic.run_synthetic(seed = seed))
+    for experiment_name in all_experiments_names:
+        print(f'Running: {experiment_name}')
+        for config in all_experiments[experiment_name]:
+            name = f"{experiment_name}\n" \
+                   f"[Straddled type = asymmetric | Sample size = {config['sample_size'] * 100}% | " \
+                   f"Num. Epochs = {config['num_epochs']} | Learning rate = {config['learning_rate']} | " \
+                   f"Num. runs = {config['num_tests']}]" \
 
-    CIs = confidence_intervals.ConfidenceIntervals(all_histories, MNIST_CONFIG['num_tests'], name = name)
-    CIs.calculate_CI_learning_curves()
+            seeds = list(range(config['num_tests']))
+            all_histories = []
+            for seed in seeds:
+                all_histories.append(mnist.run_mnist(seed = seed, sample_size=config['sample_size'],
+                                                     num_epochs=config['num_epochs'], lr=config['learning_rate']))
+
+            CIs = confidence_intervals.ConfidenceIntervals(all_histories, config['num_tests'], name = name)
+            CIs.calculate_CI_learning_curves()

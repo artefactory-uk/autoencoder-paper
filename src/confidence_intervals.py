@@ -1,7 +1,13 @@
 import numpy as np
 import scipy.stats
 from matplotlib import pyplot as plt
+from matplotlib import rc
+
 from src.paths import CI_EXPERIMENT_PATH
+
+#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+rc('font',**{'family':'serif','serif':['Founders Grotesk']})
+plt.rcParams.update({'font.size': 22})
 
 class ConfidenceIntervals():
     def __init__(self, all_histories, num_experiments,name):
@@ -66,7 +72,20 @@ class ConfidenceIntervals():
             axs[cnt].plot(epochs_list, all_means, label=name)
             axs[cnt].fill_between(epochs_list, all_lower, all_upper, alpha=.2)
             axs[cnt].set_title(f"{key}")
-            # axs[cnt].set_ylim((0.04, 0.15))
+            # Plot lowest point
+            lowest = min(zip(np.round(all_means,3),epochs_list))
+            print(lowest)
+            lowest_loss,lowest_epoch = lowest[0], lowest[1]
+
+            if name == 'train loss':
+                color = 'blue'
+            else:
+                color = 'orange'
+
+            axs[cnt].scatter(lowest_epoch, lowest_loss,color = color, s= 90)
+            axs[cnt].axhline(y=lowest_loss, linestyle='--',color = color, label = f"Lowest point ({name}) = {round(lowest_loss,3)} at epoch {lowest_epoch}")
+
+            # axs[cnt].set_ylim((0.04, 0.15))            axs[cnt].plot(lowest_epoch, lowest_loss)
             axs[cnt].set_xlabel('Epoch')
             axs[cnt].set_ylabel('Loss')
             axs[cnt].legend(loc="upper right")
@@ -75,7 +94,7 @@ class ConfidenceIntervals():
         print(first_epochs)
         y_max, y_min = np.max(first_epochs), np.min(last_epochs)
         for cnt, _ in enumerate(val_losses.keys()):
-            axs[cnt].set_ylim((y_min - (0.01*y_min), y_max+(0.01*y_max)))
+            axs[cnt].set_ylim((y_min - (0.04*y_min), y_max+(0.04*y_max)))
 
     def calculate_CI_learning_curves(self):
         '''
@@ -85,12 +104,12 @@ class ConfidenceIntervals():
         losses = self.__restruct_history('loss')
 
 
-        fig, axs = plt.subplots(1, len(val_losses.keys()), figsize=(38.5, 7.5))
+        fig, axs = plt.subplots(1, len(val_losses.keys()), figsize=(38.5, 17.5))
 
 
         self.plot_epochs(axs, losses, "train loss")
         self.plot_epochs(axs, val_losses,"validation loss")
 
-        fig.suptitle(f"{self.name} {self.CI*100}% Confidence interval [{self.num_epochs} epochs, {self.num_experiments} runs]")
+        fig.suptitle(f"{self.name}\n{self.CI*100}% Confidence interval\n\n")
         fig.savefig(CI_EXPERIMENT_PATH + self.name +'_CI_' + 'test' + '.png')
 
