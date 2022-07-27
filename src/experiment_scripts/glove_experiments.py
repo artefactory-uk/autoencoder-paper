@@ -2,12 +2,13 @@ import src.autoencoder_glove_train as glove
 import src.confidence_intervals as confidence_intervals
 import json
 import time
+import os
 
 '''
 This script runs experiments on the GLoVE dataset 
 '''
-
-GLOVE_CONFIG_FILENAME = './experiment_scripts/glove_experiments_config.json'
+dir_path = os.path.abspath(os.path.dirname(__file__))
+GLOVE_CONFIG_FILENAME = dir_path+'/glove_experiments_config.json'
 with open(GLOVE_CONFIG_FILENAME) as config_file:
     all_experiments = json.load(config_file)
     all_experiments_names = all_experiments.keys()

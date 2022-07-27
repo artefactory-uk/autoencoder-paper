@@ -2,11 +2,13 @@ import src.confidence_intervals as confidence_intervals
 import src.autoencoder_mnist_train as mnist
 import json
 import time
+import os
 
 '''
 This script runs experiments on the MNIST dataset 
 '''
-MNIST_CONFIG_FILENAME = './experiment_scripts/mnist_experiments_config_small.json'
+dir_path = os.path.abspath(os.path.dirname(__file__))
+MNIST_CONFIG_FILENAME = dir_path+'/mnist_experiments_config_small.json'
 with open(MNIST_CONFIG_FILENAME) as config_file:
     all_experiments = json.load(config_file)
     all_experiments_names = all_experiments.keys()
