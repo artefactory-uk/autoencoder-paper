@@ -93,4 +93,4 @@ def run_synthetic(seed, num_epochs, lr):
     return run_histories
 
 if __name__ == "__main__":
-    run_synthetic()
+    run_synthetic(1, 100, 0.001)

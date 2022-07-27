@@ -16,7 +16,6 @@ class ConfidenceIntervals():
         self.num_experiments = num_experiments
         self.num_epochs = len(self.all_histories[0][0][1].history['val_loss'])
         self.CI = 0.95
-        print(f'Number of epochs: {self.num_epochs}')
 
     def __calculate_CI(self,curve_points, CI = 0.95):
         '''
@@ -55,7 +54,6 @@ class ConfidenceIntervals():
             for i in range(self.num_epochs):
                 epochs[i] = []
                 for j in range(self.num_experiments):
-                    print(f'Epoch {j}')
                     epochs[i].append(all_losses[i + (self.num_epochs * j)])
 
             all_means, all_upper, all_lower = [], [], []
@@ -74,7 +72,6 @@ class ConfidenceIntervals():
             axs[cnt].set_title(f"{key}")
             # Plot lowest point
             lowest = min(zip(np.round(all_means,3),epochs_list))
-            print(lowest)
             lowest_loss,lowest_epoch = lowest[0], lowest[1]
 
             if name == 'train loss':
@@ -91,10 +88,9 @@ class ConfidenceIntervals():
             axs[cnt].legend(loc="upper right")
 
         # Reset axis
-        print(first_epochs)
         y_max, y_min = np.max(first_epochs), np.min(last_epochs)
         for cnt, _ in enumerate(val_losses.keys()):
-            axs[cnt].set_ylim((y_min - (0.04*y_min), y_max+(0.04*y_max)))
+            axs[cnt].set_ylim((y_min - (0.04*y_min), y_max-(0.25*y_max)))
 
     def calculate_CI_learning_curves(self):
         '''
@@ -104,7 +100,7 @@ class ConfidenceIntervals():
         losses = self.__restruct_history('loss')
 
 
-        fig, axs = plt.subplots(1, len(val_losses.keys()), figsize=(38.5, 17.5))
+        fig, axs = plt.subplots(1, len(val_losses.keys()), figsize=(138.5, 17.5))
 
 
         self.plot_epochs(axs, losses, "train loss")

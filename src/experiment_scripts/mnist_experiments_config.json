@@ -2,66 +2,75 @@
   "MNIST learning rate experiment":
   [
     {
-      "num_tests": 1,
+      "num_tests": 3,
       "sample_size": 0.1,
-      "num_epochs": 500,
+      "num_epochs": 1000,
+      "learning_rate": 0.0005
+    }
+  ],
+  "MNIST learning rate experiment":
+  [
+    {
+      "num_tests": 3,
+      "sample_size": 0.8,
+      "num_epochs": 1000,
       "learning_rate": 0.1
     },
     {
-      "num_tests": 1,
-      "sample_size": 0.1,
-      "num_epochs": 800,
+      "num_tests": 3,
+      "sample_size": 0.8,
+      "num_epochs": 1500,
       "learning_rate": 0.01
     },
     {
-      "num_tests": 1,
-      "sample_size": 0.1,
-      "num_epochs": 1000,
+      "num_tests": 3,
+      "sample_size": 0.8,
+      "num_epochs": 2500,
       "learning_rate": 0.001
     },
     {
-      "num_tests": 1,
-      "sample_size": 0.1,
-      "num_epochs": 1400,
+      "num_tests": 3,
+      "sample_size": 0.8,
+      "num_epochs": 5000,
       "learning_rate": 0.0001
     }
   ],
   "MNIST data size experiment":
   [
     {
-      "num_tests": 1,
+      "num_tests": 3,
+      "sample_size": 0.005,
+      "num_epochs": 2500,
+      "learning_rate": 0.005
+    },
+    {
+      "num_tests": 3,
       "sample_size": 0.01,
-      "num_epochs": 350,
+      "num_epochs": 2500,
       "learning_rate": 0.005
     },
     {
-      "num_tests": 1,
+      "num_tests": 3,
+      "sample_size": 0.025,
+      "num_epochs": 2000,
+      "learning_rate": 0.005
+    },
+    {
+      "num_tests": 3,
       "sample_size": 0.05,
-      "num_epochs": 500,
+      "num_epochs": 1500,
       "learning_rate": 0.005
     },
     {
-      "num_tests": 1,
+      "num_tests": 3,
       "sample_size": 0.10,
-      "num_epochs": 500,
+      "num_epochs": 1500,
       "learning_rate": 0.005
     },
     {
-      "num_tests": 1,
-      "sample_size": 0.20,
-      "num_epochs": 600,
-      "learning_rate": 0.005
-    },
-    {
-      "num_tests": 1,
-      "sample_size": 0.40,
-      "num_epochs": 600,
-      "learning_rate": 0.005
-    },
-     {
-      "num_tests": 1,
+      "num_tests": 3,
       "sample_size": 0.80,
-      "num_epochs": 600,
+      "num_epochs": 1500,
       "learning_rate": 0.005
     }
   ]
