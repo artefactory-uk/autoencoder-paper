@@ -6,7 +6,7 @@ import time
 This script runs experiments on the MNIST dataset 
 '''
 
-SYNTHETIC_CONFIG_FILENAME = 'experiment_scripts/synthetic_experiments_config.json'
+SYNTHETIC_CONFIG_FILENAME = './experiment_scripts/synthetic_experiments_config.json'
 with open(SYNTHETIC_CONFIG_FILENAME) as config_file:
     all_experiments = json.load(config_file)
     all_experiments_names = all_experiments.keys()
