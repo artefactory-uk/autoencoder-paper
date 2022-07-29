@@ -3,7 +3,7 @@
   [
     {
       "num_tests": 1,
-      "num_epochs": 500,
+      "num_epochs": 1800,
       "learning_rate": 0.0001
     }
   ]

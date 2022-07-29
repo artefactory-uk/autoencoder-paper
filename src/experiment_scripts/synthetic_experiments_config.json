@@ -2,7 +2,7 @@
      "Synthetic Experiment":
   [
     {
-      "num_tests": 4,
+      "num_tests": 1,
       "num_epochs": 400,
       "learning_rate": 0.001
     }
