@@ -93,7 +93,7 @@ class ConfidenceIntervals():
 
     def pair_plot_epochs(self, train_losses, val_losses):
         for cnt, key in enumerate(val_losses.keys()):
-            fig, axs = plt.subplots(1, 1, figsize=(30, 15.5))
+            fig, axs = plt.subplots(1, 1, figsize=(30, 30))
 
             key_means_train, straddled_means_train = self.get_points_to_plot(key, train_losses)
             key_means_val, straddled_means_val = self.get_points_to_plot(key, val_losses)
@@ -132,9 +132,11 @@ class ConfidenceIntervals():
     def __history_to_csv(self, train_losses, val_losses):
         history_df = pd.DataFrame()
         history_df['epoch'] = self.epochs_list
+        print(train_losses)
         for key in train_losses.keys():
-            history_df[key + ' train'] = train_losses[key][0]
-            history_df[key + ' validation'] = val_losses[key][0]
+            for i in range(self.num_experiments):
+                history_df[key + ' train - run '+ str(i + 1)] = train_losses[key][0][i * self.num_epochs :((i+1) *self.num_epochs)]
+                history_df[key + ' validation - run '+str(i + 1)] = val_losses[key][0][i * self.num_epochs :((i+1) *self.num_epochs)]
 
         history_df.to_csv(CI_EXPERIMENT_PATH+self.save_path + self.name+'.csv', index = False)
 
@@ -152,10 +154,14 @@ class ConfidenceIntervals():
         '''
         val_losses = self.__restruct_history('val_loss')
         losses = self.__restruct_history('loss')
-        self.__history_to_csv(losses, val_losses)
+        try:
+            self.__history_to_csv(losses, val_losses)
+            print('csv saved successfully')
+        except Exception as e:
+            print('Saving csv failed')
+            print(e)
 
         fig, axs = plt.subplots(1, len(val_losses.keys()), figsize=(100, 15.5))
-
 
         self.plot_epochs(axs, losses, "train loss")
         self.plot_epochs(axs, val_losses,"validation loss")

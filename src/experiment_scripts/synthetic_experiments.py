@@ -9,7 +9,7 @@ from src.paths import CI_EXPERIMENT_PATH
 This script runs experiments on the MNIST dataset 
 '''
 dir_path = os.path.abspath(os.path.dirname(__file__))
-SYNTHETIC_CONFIG_FILENAME = dir_path+'/synthetic_experiments_test.json'
+SYNTHETIC_CONFIG_FILENAME = dir_path+'/synthetic_experiments_config.json'
 with open(SYNTHETIC_CONFIG_FILENAME) as config_file:
     all_experiments = json.load(config_file)
     all_experiments_names = all_experiments.keys()

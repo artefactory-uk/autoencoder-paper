@@ -186,6 +186,9 @@ def train_autoencoder(
         epochs=no_of_epochs,
         validation_data=(test_data, test_data),
         shuffle=True,
+        batch_size = 9999999
+
+
     )
 
     plt.figure()
