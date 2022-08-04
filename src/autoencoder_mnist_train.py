@@ -1,13 +1,13 @@
 import numpy as np
-from autoencoder_model import run_experiments, process_experiments, set_seeds
-from paths import MNIST_EXPERIMENT_PATH
+from src.autoencoder_model import run_experiments, process_experiments, set_seeds
+from src.paths import MNIST_EXPERIMENT_PATH
 from tensorflow.keras.datasets import mnist
 
 '''
 Simply replicating experiment from: https://blog.keras.io/building-autoencoders-in-keras.html
 '''
 
-def run_mnist(seed, sample_size = 1):
+def run_mnist(seed, num_epochs, lr, sample_size = 1):
     set_seeds(seed)
     run_type = "no_batching"
     (x_train,_), (x_test,_) = mnist.load_data()
@@ -28,7 +28,8 @@ def run_mnist(seed, sample_size = 1):
         test_mask[training_indices] = 0
         x_test = all_data[test_mask]
 
-    run_histories = run_experiments(x_train, x_test, run_type=run_type, experiment_path=MNIST_EXPERIMENT_PATH)
+    run_histories = run_experiments(x_train, x_test, run_type=run_type, experiment_path=MNIST_EXPERIMENT_PATH,
+                                    num_epochs=num_epochs, lr=lr)
     process_experiments(name="mnist", experiment_path=MNIST_EXPERIMENT_PATH)
 
     return run_histories
