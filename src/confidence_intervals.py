@@ -132,7 +132,7 @@ class ConfidenceIntervals():
     def __history_to_csv(self, train_losses, val_losses):
         history_df = pd.DataFrame()
         history_df['epoch'] = self.epochs_list
-        print(train_losses)
+
         for key in train_losses.keys():
             for i in range(self.num_experiments):
                 history_df[key + ' train - run '+ str(i + 1)] = train_losses[key][0][i * self.num_epochs :((i+1) *self.num_epochs)]
