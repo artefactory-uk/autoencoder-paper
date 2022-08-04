@@ -6,7 +6,6 @@ from matplotlib import rc
 
 from src.paths import CI_EXPERIMENT_PATH
 
-#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc('font',**{'family':'serif','serif':['Founders Grotesk']})
 plt.rcParams.update({'font.size': 29})
 
@@ -84,9 +83,10 @@ class ConfidenceIntervals():
             # axs[cnt].set_ylim((0.04, 0.15))            axs[cnt].plot(lowest_epoch, lowest_loss)
             axs[cnt].set_xlabel('Epoch')
             axs[cnt].set_ylabel('Loss')
-            # axs[cnt].legend(loc="upper right")
+            axs[cnt].legend(loc="upper right")
 
         # Reset axis
+        print(first_epochs)
         y_max, y_min = np.max(first_epochs), np.min(last_epochs)
         for cnt, _ in enumerate(losses.keys()):
             axs[cnt].set_ylim((y_min - (0.04*y_min), y_max+(0.01*y_max)))

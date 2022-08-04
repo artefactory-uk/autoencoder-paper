@@ -6,7 +6,7 @@ import os
 from src.paths import CI_EXPERIMENT_PATH
 
 '''
-This script runs experiments on the MNIST dataset 
+This script runs experiments on the synthetic dataset 
 '''
 dir_path = os.path.abspath(os.path.dirname(__file__))
 SYNTHETIC_CONFIG_FILENAME = dir_path+'/synthetic_experiments_config.json'
