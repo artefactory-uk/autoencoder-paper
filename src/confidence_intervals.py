@@ -5,7 +5,6 @@ from matplotlib import rc
 
 from src.paths import CI_EXPERIMENT_PATH
 
-#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc('font',**{'family':'serif','serif':['Founders Grotesk']})
 plt.rcParams.update({'font.size': 29})
 
