@@ -15,6 +15,7 @@ def set_seeds(x):
     tf.random.set_seed(x)
 
 
+FULL_BATCH_SIZE = 9999999
 FIRST_LAYER_SIZE = 64
 STRADDLED = True
 
@@ -66,6 +67,7 @@ class AnomalyDetector(tf.keras.Model):
     ):
         super().__init__()
         if initialiser_key == "straddled":
+
             self.encoder = tf.keras.Sequential(
                 [
                     layers.Dense(
@@ -141,6 +143,12 @@ class AnomalyDetector(tf.keras.Model):
         decoded = self.decoder(encoded)
         return decoded
 
+    def decoded_latent_space(self, x):
+        encoded = self.encoder.predict(x)
+        decoded = self.decoder.predict(encoded)
+        return decoded
+
+
 
 def train_autoencoder(
     train_data_df,
@@ -151,6 +159,7 @@ def train_autoencoder(
     nodesize=32,
     initialiser="straddled",
     run_type="all_layers",
+    batch_size = FULL_BATCH_SIZE
 ):
     """
     run_type options:
@@ -168,6 +177,7 @@ def train_autoencoder(
 
 
     train_data = tf.cast(train_data, tf.float32)
+    test_data_original = test_data.copy()
     test_data = tf.cast(test_data, tf.float32)
 
     no_of_features = train_data.shape[1]
@@ -185,9 +195,7 @@ def train_autoencoder(
         train_data,
         epochs=no_of_epochs,
         validation_data=(test_data, test_data),
-        shuffle=True,
-        batch_size = 9999999
-
+        batch_size = batch_size
 
     )
 
@@ -211,6 +219,28 @@ def train_autoencoder(
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
+
+    decoded_output = autoencoder.decoded_latent_space(test_data_original)
+    SHOW_MNIST_OUTPUT = False
+    if SHOW_MNIST_OUTPUT:
+        n = 10  # How many digits we will display
+        plt.figure(figsize=(20, 4))
+        for i in range(n):
+            # Display original
+            ax = plt.subplot(2, n, i + 1)
+            plt.imshow(test_data_original[i].reshape(28, 28))
+            plt.gray()
+            ax.get_xaxis().set_visible(False)
+            ax.get_yaxis().set_visible(False)
+
+            # Display reconstruction
+            ax = plt.subplot(2, n, i + 1 + n)
+            plt.imshow(decoded_output[i].reshape(28, 28))
+            plt.gray()
+            ax.get_xaxis().set_visible(False)
+            ax.get_yaxis().set_visible(False)
+        plt.show()
+
     return history
 
 
@@ -247,7 +277,7 @@ def run_autoencoder(autoencoder_folder, data):
 
 
 def run_experiments(train, test, run_type, experiment_path,
-                    num_epochs, lr):
+                    num_epochs, lr, batch_size = FULL_BATCH_SIZE):
     train_data_df, test_data_df = train, test
     print(experiment_path)
     run_histories = []
@@ -261,6 +291,7 @@ def run_experiments(train, test, run_type, experiment_path,
             nodesize=32,
             initialiser=key,
             run_type=run_type,
+            batch_size=batch_size
         )
         run_histories.append((key,history))
     return run_histories
