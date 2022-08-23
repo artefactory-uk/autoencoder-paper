@@ -3,6 +3,7 @@ import src.autoencoder_synthetic_train as synthetic
 import json
 import time
 import os
+from src.paths import CI_EXPERIMENT_PATH
 
 '''
 This script runs experiments on the synthetic dataset 
@@ -18,6 +19,12 @@ if __name__ == "__main__":
 
     for experiment_name in all_experiments_names:
         print(f'Running: {experiment_name}')
+        folder_name = CI_EXPERIMENT_PATH +experiment_name
+        try:
+            os.mkdir(folder_name, 0o777)
+        except:
+            print(f'Folder {folder_name} already exists.')
+
         for config in all_experiments[experiment_name]:
             name = f"{experiment_name}\n" \
                    f"[Straddled type = asymmetric | " \
@@ -35,7 +42,7 @@ if __name__ == "__main__":
                 end_time = time.perf_counter()
                 print(f'{"-"*20}\n{round((end_time-start_time)/60,3)} minutes for 1 run of:\n{name}\n{"-"*20}\n')
 
-            CIs = confidence_intervals.ConfidenceIntervals(all_histories, config['num_tests'], name = name)
+            CIs = confidence_intervals.ConfidenceIntervals(all_histories, config['num_tests'], name = name, save_path = experiment_name +'/' )
             CIs.calculate_CI_learning_curves()
 
     all_end_time = time.perf_counter()
