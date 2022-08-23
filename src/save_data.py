@@ -1,16 +1,7 @@
-import numpy as np
 import pandas as pd
-import scipy.stats
-from matplotlib import pyplot as plt
-from matplotlib import rc
 import pickle
 
-
 from src.paths import CI_EXPERIMENT_PATH
-
-#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-rc('font',**{'family':'serif','serif':['Founders Grotesk']})
-plt.rcParams.update({'font.size': 29})
 
 class SaveData():
     def __init__(self, all_histories, num_experiments,name, save_path = ""):

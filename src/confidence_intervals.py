@@ -1,21 +1,9 @@
 import numpy as np
-import pandas as pd
 import scipy.stats
-from matplotlib import pyplot as plt
-from matplotlib import rc
-import pickle
-
-
-from src.paths import CI_EXPERIMENT_PATH
-
-#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-rc('font',**{'family':'serif','serif':['Founders Grotesk']})
-plt.rcParams.update({'font.size': 29})
 
 class ConfidenceIntervals():
     def __init__(self, CI = 0.95):
         self.CI = CI
-
 
     def __calculate_CI(self,curve_points, CI = 0.95):
         '''

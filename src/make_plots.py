@@ -1,10 +1,13 @@
 from paths import CI_EXPERIMENT_PATH
 import confidence_intervals as confidence_intervals
-import os
 import pickle
 import matplotlib.pyplot as plt
+from matplotlib import rc
 import numpy as np
 import pandas as pd
+
+rc('font',**{'family':'serif','serif':['Founders Grotesk']})
+plt.rcParams.update({'font.size': 29})
 
 class MakePlots():
     def __init__(self, experiment_name, file_name):
