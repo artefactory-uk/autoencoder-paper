@@ -8,7 +8,6 @@ import pandas as pd
 
 class MakePlots():
     def __init__(self, experiment_name, file_name):
-        print(os.getcwd())
         self.file_name = file_name
         self.experiment_name = experiment_name
         self.save_path =  CI_EXPERIMENT_PATH + self.experiment_name + '/'
@@ -102,7 +101,6 @@ class MakePlots():
                 converged_epochs.append(np.nan)
                 converged_losses.append(np.nan)
 
-
             # axs.plot(self.epochs_list, key_means_train, label=key + ' train')
             # axs[0].fill_between(epochs_list, all_lower, all_upper, alpha=.2)
         axs.legend(loc="upper right")
@@ -174,9 +172,9 @@ if __name__ == '__main__':
 
     if plot_mnist:
         plots = MakePlots('MNIST Experiment TEST',
-                          'MNIST Experiment TEST\n[Straddled type = asymmetric | Num. Epochs = 20 | Learning rate = 0.1 | Num. runs = 1]')
+                          'MNIST Experiment TEST\n[Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
 
-        converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
+        converged_df = plots.plot_all(epsilon = 0.005, alpha = 250)
         print('MNIST')
 
         print(converged_df)
