@@ -1,6 +1,6 @@
 import json
-import os
 from src.paths import CI_EXPERIMENT_PATH
+from pathlib import Path
 
 def read_config_file(file_path):
     with open(file_path) as config_file:
@@ -16,12 +16,11 @@ def construct_name(config, experiment_name):
     return name
 
 def make_experiment_dir(experiment_name):
-    folder_name = CI_EXPERIMENT_PATH + experiment_name
-
-    try:
-        os.mkdir(folder_name, 0o777)
-    except:
-        print(f'Folder {folder_name} already exists.')
+    path = CI_EXPERIMENT_PATH + experiment_name
+    path_to_check = Path(path)
+    if not path_to_check.is_dir():
+        path_to_check.mkdir(parents=True, exist_ok=False)
+        print(f"Folder created for {path_to_check}")
 
 def print_one_run_time(start_time, end_time, name):
     print(f'{"-" * 20}\n{round((end_time - start_time) / 60, 3)} minutes for 1 run of:\n{name}\n{"-" * 20}\n')
