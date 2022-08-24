@@ -1,4 +1,4 @@
-from paths import CI_EXPERIMENT_PATH
+from paths import PLOTS_EXPERIMENT_PATH
 import confidence_intervals as confidence_intervals
 import pickle
 import matplotlib.pyplot as plt
@@ -15,7 +15,7 @@ class MakePlots():
     def __init__(self, experiment_name, file_name):
         self.file_name = file_name
         self.experiment_name = experiment_name
-        self.save_path =  CI_EXPERIMENT_PATH + self.experiment_name + '/'
+        self.save_path = PLOTS_EXPERIMENT_PATH + self.experiment_name + '/'
         self.data_file_path = self.save_path + self.file_name + '_all_data.pkl'
         self.CI = confidence_intervals.ConfidenceIntervals()
         with open( self.data_file_path, 'rb') as pkl:
@@ -134,7 +134,7 @@ class MakePlots():
 
             axs.set_xlabel('Epoch')
             axs.set_ylabel('Loss')
-            fig.savefig(CI_EXPERIMENT_PATH+self.save_path+f'straddled_{key}_'+self.file_name + '.png')
+            fig.savefig(PLOTS_EXPERIMENT_PATH + self.save_path + f'straddled_{key}_' + self.file_name + '.png')
 
     def convergence_criteria(self, loss_curve, epsilon, num_epochs):
         for cnt, epoch in enumerate(loss_curve):
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     if plot_synthetic:
         plots = MakePlots('Synthetic Experiment',
-                          'Synthetic Experiment\n[Straddled type = asymmetric | '
+                          'Synthetic Experiment[Straddled type = asymmetric | '
                           'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
 
         converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
     if plot_swarm:
         plots = MakePlots('Swarm Experiment',
-                          'Swarm Experiment\n[Straddled type = asymmetric | '
+                          'Swarm Experiment[Straddled type = asymmetric | '
                           'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 500)

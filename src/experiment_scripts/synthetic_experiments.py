@@ -2,7 +2,6 @@ import src.save_data as save_data
 import src.autoencoder_synthetic_train as synthetic
 import time
 import os
-from src.paths import CI_EXPERIMENT_PATH
 import helpers
 '''
 This script runs experiments on the Synthetic dataset 

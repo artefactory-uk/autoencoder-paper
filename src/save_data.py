@@ -1,7 +1,7 @@
 import pandas as pd
 import pickle
 
-from src.paths import CI_EXPERIMENT_PATH
+from src.paths import PLOTS_EXPERIMENT_PATH
 
 class SaveData():
     def __init__(self, all_histories, num_experiments,name, save_path = ""):
@@ -42,10 +42,10 @@ class SaveData():
                 history_df[key + ' train - run '+ str(i + 1)] = train_losses[key][0][i * self.num_epochs :((i+1) *self.num_epochs)]
                 history_df[key + ' validation - run '+str(i + 1)] = val_losses[key][0][i * self.num_epochs :((i+1) *self.num_epochs)]
 
-        history_df.to_csv(CI_EXPERIMENT_PATH+self.save_path + self.name+'.csv', index = False)
+        history_df.to_csv(PLOTS_EXPERIMENT_PATH + self.save_path + self.name + '.csv', index = False)
 
     def __save_pkl(self, all_data_dict):
-        save_path = CI_EXPERIMENT_PATH+self.save_path + self.name+'_all_data.pkl'
+        save_path = PLOTS_EXPERIMENT_PATH + self.save_path + self.name + '_all_data.pkl'
 
         with open(save_path, 'wb') as pkl:
             pickle.dump(all_data_dict, pkl)
