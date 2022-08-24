@@ -3,11 +3,13 @@ import confidence_intervals as confidence_intervals
 import pickle
 import matplotlib.pyplot as plt
 from matplotlib import rc
+import seaborn as sns
 import numpy as np
 import pandas as pd
 
 rc('font',**{'family':'serif','serif':['Founders Grotesk']})
 plt.rcParams.update({'font.size': 29})
+
 
 class MakePlots():
     def __init__(self, experiment_name, file_name):
@@ -25,7 +27,6 @@ class MakePlots():
         self.val_losses = self.all_data['val_losses']
         self.num_experiments = self.all_data['num_experiments']
         self.color_map = ['blue', 'red','green','pink','orange','black','grey','yellow']
-
 
     def make_losses_dict(self, losses):
         epochs = dict()
@@ -54,7 +55,6 @@ class MakePlots():
             first_epochs.append(epochs[0])
             last_epochs.append(epochs[self.num_epochs - 1])
 
-
             axs[cnt].plot(self.epochs_list, all_means, label=name)
             axs[cnt].fill_between(self.epochs_list, all_lower, all_upper, alpha=.2)
             axs[cnt].set_title(f"{key}")
@@ -68,12 +68,11 @@ class MakePlots():
                 color = 'orange'
 
             axs[cnt].scatter(lowest_epoch, lowest_loss,color = color, s= 90)
-            axs[cnt].axhline(y=lowest_loss, linestyle='--',color = color, label = f"Lowest point ({name}) = {round(lowest_loss,3)} at epoch {lowest_epoch}")
+            axs[cnt].axhline(y=lowest_loss, linestyle='--',color = color,
+                             label = f"Lowest point ({name}) = {round(lowest_loss,3)} at epoch {lowest_epoch}")
 
-            # axs[cnt].set_ylim((0.04, 0.15))            axs[cnt].plot(lowest_epoch, lowest_loss)
             axs[cnt].set_xlabel('Epoch')
             axs[cnt].set_ylabel('Loss')
-            # axs[cnt].legend(loc="upper right")
 
         # Reset axis
         y_max, y_min = np.max(first_epochs), np.min(last_epochs)
@@ -95,7 +94,6 @@ class MakePlots():
 
             if converged_points != False:
                 converged_epoch, converged_loss = converged_points[0], converged_points[1]
-                print(converged_epoch, converged_loss)
                 axs.scatter(converged_epoch, converged_loss, s=500, marker = 'd',
                             color = self.color_map[cnt])
                 converged_epochs.append(converged_epoch)
@@ -104,8 +102,6 @@ class MakePlots():
                 converged_epochs.append(np.nan)
                 converged_losses.append(np.nan)
 
-            # axs.plot(self.epochs_list, key_means_train, label=key + ' train')
-            # axs[0].fill_between(epochs_list, all_lower, all_upper, alpha=.2)
         axs.legend(loc="upper right")
         axs.set_title(f"{self.file_name}\n [$ \epsilon = {epsilon}$, $\\alpha = {alpha}$]")
 
@@ -128,10 +124,11 @@ class MakePlots():
             axs.plot(self.epochs_list, key_means_train, label=key + ' train',  color = 'blue')
             axs.plot(self.epochs_list, key_means_val, label=key + ' validation', color = 'blue', linestyle='dashed')
 
-            axs.plot(self.epochs_list, straddled_means_train, label='straddled train',  color = 'red')
-            axs.plot(self.epochs_list, straddled_means_val, label='straddled validation', color = 'red', linestyle='dashed')
+            axs.plot(self.epochs_list, straddled_means_train, label='straddled train',
+                     color = 'red')
+            axs.plot(self.epochs_list, straddled_means_val, label='straddled validation',
+                     color = 'red', linestyle='dashed')
 
-            # axs[0].fill_between(epochs_list, all_lower, all_upper, alpha=.2)
             axs.legend(loc="upper right")
             axs.set_title(f"Straddled + {key}\n{self.file_name}")
 
@@ -146,36 +143,54 @@ class MakePlots():
                 if next_epoch <= (epoch + epsilon) and next_epoch >= (epoch - epsilon):
                     num_converged_epochs += 1
                     if num_converged_epochs >= num_epochs:
-                        print('Converged')
                         return cnt + 1, epoch
                 else:
                     break
 
         return False
 
+    def plot_dist_final_loss(self):
+        '''
+        Plot the distribution of the final loss reached
+        '''
+        epochs_glorot = self.make_losses_dict(self.val_losses['glorotnormal'][0])[self.num_epochs - 1]
+        epochs_straddled = self.make_losses_dict(self.val_losses['straddled'][0])[self.num_epochs - 1]
+
+        fig, axs = plt.subplots(1, 1, figsize=(30, 30))
+        sns.histplot(epochs_glorot, label='GlorotNorm', ax=axs, kde = True, color = 'red')
+        sns.histplot(epochs_straddled, label='Straddled', ax=axs, kde = True,color = 'blue')
+        axs.legend(loc="upper right")
+
+        fig.savefig(self.save_path + f'last_epoch_dist.png')
+
+
 if __name__ == '__main__':
-    plot_synthetic, plot_swarm, plot_mnist = False, False, True
+    plot_synthetic, plot_swarm, plot_mnist = True, False, False
 
     if plot_synthetic:
-        plots = MakePlots('Synthetic Experiment TEST',
-                          'Synthetic Experiment TEST\n[Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 10]')
+        plots = MakePlots('Synthetic Experiment',
+                          'Synthetic Experiment\n[Straddled type = asymmetric | '
+                          'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
 
         converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
+        plots.plot_dist_final_loss()
         print('Synthetic')
         print(converged_df)
 
 
     if plot_swarm:
-        plots = MakePlots('Swarm Experiment TEST',
-                          'Swarm Experiment TEST\n[Straddled type = asymmetric | Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
+        plots = MakePlots('Swarm Experiment',
+                          'Swarm Experiment\n[Straddled type = asymmetric | '
+                          'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 500)
         print('Swarm Behaviour')
         print(converged_df)
 
     if plot_mnist:
-        plots = MakePlots('MNIST Experiment TEST',
-                          'MNIST Experiment TEST\n[Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
+        plots = MakePlots('MNIST Experiment',
+                          'MNIST Experiment\n[Straddled type = asymmetric | '
+                          'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 250)
         print('MNIST')

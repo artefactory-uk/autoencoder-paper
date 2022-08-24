@@ -9,7 +9,7 @@ def read_config_file(file_path):
     return all_experiments, all_experiments_names
 
 def construct_name(config, experiment_name):
-    name = f"{experiment_name}\n" \
+    name = f"{experiment_name}" \
            f"[Straddled type = asymmetric | " \
            f"Num. Epochs = {config['num_epochs']} | Learning rate = {config['learning_rate']} | " \
            f"Num. runs = {config['num_tests']}]"

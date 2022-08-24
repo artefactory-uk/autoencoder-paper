@@ -8,7 +8,7 @@ import helpers
 This script runs experiments on the Swarm Behaviour dataset 
 '''
 dir_path = os.path.abspath(os.path.dirname(__file__))
-CONFIG_FILENAME = dir_path+'/swarm_experiments_config_test.json'
+CONFIG_FILENAME = dir_path+'/swarm_experiments_config.json'
 
 all_experiments, all_experiments_names = helpers.read_config_file(CONFIG_FILENAME)
 

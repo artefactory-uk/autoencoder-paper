@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from src.autoencoder_model import run_experiments, process_experiments, set_seeds
 
 from sklearn.utils import shuffle
@@ -8,6 +7,10 @@ from src.paths import SWARM_DATA_PATH, SWARM_EXPERIMENT_PATH
 
 
 def load_swarm_data():
+    '''
+    Dataset:
+    https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification
+    '''
     swarm_df = pd.read_csv(SWARM_DATA_PATH)
     print(swarm_df.dtypes)
     cols_to_drop = ['Swarm_Behaviour']
@@ -17,8 +20,8 @@ def load_swarm_data():
     scaler = MinMaxScaler()
     swarm_df = scaler.fit_transform(swarm_df)
 
-
     return swarm_df
+
 
 def run_swarm(seed, num_epochs, lr):
     set_seeds(seed)
@@ -38,7 +41,9 @@ def run_swarm(seed, num_epochs, lr):
                                     num_epochs=num_epochs, lr=lr)
     file_name = 'test_swarm'
     process_experiments(name=file_name, experiment_path=SWARM_EXPERIMENT_PATH)
+
     return run_histories
+
 
 if __name__ == "__main__":
     run_swarm(1, 10 ,0.01)

@@ -5,10 +5,10 @@ import os
 from src.paths import CI_EXPERIMENT_PATH
 import helpers
 '''
-This script runs experiments on the MNIST dataset 
+This script runs experiments on the Synthetic dataset 
 '''
 dir_path = os.path.abspath(os.path.dirname(__file__))
-SYNTHETIC_CONFIG_FILENAME = dir_path+'/synthetic_experiments_config_test.json'
+SYNTHETIC_CONFIG_FILENAME = dir_path+'/synthetic_experiments_config.json'
 
 all_experiments, all_experiments_names = helpers.read_config_file(SYNTHETIC_CONFIG_FILENAME)
 

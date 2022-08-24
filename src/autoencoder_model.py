@@ -6,6 +6,9 @@ import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.losses import mean_squared_error
 import tensorflow.keras.backend as K
+from tensorflow.keras.callbacks import LambdaCallback
+import pathlib
+
 
 def root_mean_squared_error(y_true, y_pred):
     return K.sqrt(mean_squared_error(y_true, y_pred))
@@ -21,13 +24,13 @@ STRADDLED = True
 
 INITIALISER_DICT = {
     "straddled": "straddled",
-    "glorotuniform": tf.keras.initializers.GlorotUniform(),
+    # "glorotuniform": tf.keras.initializers.GlorotUniform(),
     "glorotnormal": tf.keras.initializers.GlorotNormal(),
-    "identity": tf.keras.initializers.Identity(),
-    "henormal": tf.keras.initializers.HeNormal(),
-    "heuniform": tf.keras.initializers.HeUniform(),
-    "orthogonal": tf.keras.initializers.Orthogonal(),
-    "random": tf.keras.initializers.RandomNormal(),
+    # "identity": tf.keras.initializers.Identity(),
+    # "henormal": tf.keras.initializers.HeNormal(),
+    # "heuniform": tf.keras.initializers.HeUniform(),
+    # "orthogonal": tf.keras.initializers.Orthogonal(),
+    # "random": tf.keras.initializers.RandomNormal(),
 }
 
 
@@ -73,6 +76,7 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         first_layer_size,
                         activation="relu",
+                        use_bias=True,
                         kernel_initializer=tf.constant_initializer(
                             straddled_matrix(no_of_features, first_layer_size)
                         ),
@@ -80,6 +84,7 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         middle_layer_size,
                         activation="relu",
+                        use_bias=True,
                         kernel_initializer=tf.constant_initializer(
                             straddled_matrix(first_layer_size, middle_layer_size)
                         ),
@@ -92,6 +97,7 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         first_layer_size,
                         activation="relu",
+                        use_bias=True,
                         kernel_initializer=tf.constant_initializer(
                             straddled_matrix(middle_layer_size, first_layer_size)
                         ),
@@ -99,6 +105,7 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         no_of_features,
                         activation="sigmoid",
+                        use_bias=True,
                         kernel_initializer=tf.constant_initializer(
                             straddled_matrix(first_layer_size, no_of_features)
                         ),
@@ -113,11 +120,13 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         first_layer_size,
                         activation="relu",
+                        use_bias=True,
                         kernel_initializer=initialiser,
                     ),
                     layers.Dense(
                         middle_layer_size,
                         activation="relu",
+                        use_bias=True,
                         kernel_initializer=initialiser,
                     ),
                 ]
@@ -128,11 +137,15 @@ class AnomalyDetector(tf.keras.Model):
                     layers.Dense(
                         first_layer_size,
                         activation="relu",
+                        use_bias=True,
+
                         kernel_initializer=initialiser,
                     ),
                     layers.Dense(
                         no_of_features,
                         activation="sigmoid",
+                        use_bias=True,
+
                         kernel_initializer=initialiser,
                     ),
                 ]
@@ -190,13 +203,18 @@ def train_autoencoder(
     optimizer = optimizers.SGD(learning_rate=learning_rate,momentum=0.0)
     autoencoder.compile(optimizer=optimizer, loss= root_mean_squared_error)
 
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = "experiments/logs",write_grads = True,histogram_freq=1)
+
+    LambdaCallback(on_epoch_end=lambda batch, logs: tf.summary.histogram('Weights', autoencoder.get_weights()))
+    LambdaCallback(on_epoch_end=lambda batch, logs: print(autoencoder.get_weights()))
+
     history = autoencoder.fit(
         train_data,
         train_data,
         epochs=no_of_epochs,
         validation_data=(test_data, test_data),
-        batch_size = batch_size
-
+        batch_size = batch_size,
+        callbacks = [tensorboard_callback]
     )
 
     plt.figure()
@@ -279,7 +297,11 @@ def run_autoencoder(autoencoder_folder, data):
 def run_experiments(train, test, run_type, experiment_path,
                     num_epochs, lr, batch_size = FULL_BATCH_SIZE):
     train_data_df, test_data_df = train, test
-    print(experiment_path)
+
+    file = pathlib.Path(experiment_path)
+    if not file.exists():
+        raise FileExistsError('The experiment folder does not exist.')
+
     run_histories = []
     for key in INITIALISER_DICT:
         history = train_autoencoder(
