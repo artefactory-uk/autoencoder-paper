@@ -29,7 +29,7 @@ def run_mnist(seed, num_epochs, lr, sample_size = 1):
         x_test = all_data[test_mask]
 
     run_histories = run_experiments(x_train, x_test, run_type=run_type, experiment_path=MNIST_EXPERIMENT_PATH,
-                                    num_epochs=num_epochs, lr=lr)
+                                    num_epochs=num_epochs, lr=lr, batch_size = 256)
     process_experiments(name="mnist", experiment_path=MNIST_EXPERIMENT_PATH)
 
     return run_histories

@@ -1,14 +1,15 @@
 import src.save_data as save_data
-import src.autoencoder_mnist_train as mnist
+import src.autoencoder_swarm_behaviour_train as swarm
 import time
 import os
 import helpers
 
 '''
-This script runs experiments on the MNIST dataset 
+This script runs experiments on the Swarm Behaviour dataset 
 '''
 dir_path = os.path.abspath(os.path.dirname(__file__))
-CONFIG_FILENAME = dir_path+'/mnist_experiments_config.json'
+CONFIG_FILENAME = dir_path+'/swarm_experiments_config.json'
+
 all_experiments, all_experiments_names = helpers.read_config_file(CONFIG_FILENAME)
 
 if __name__ == "__main__":
@@ -27,14 +28,13 @@ if __name__ == "__main__":
             for seed in seeds:
                 start_time = time.perf_counter()
 
-                all_histories.append(mnist.run_mnist(seed = seed, sample_size=config['sample_size'],
-                                                     num_epochs=config['num_epochs'], lr=config['learning_rate']))
+                all_histories.append(swarm.run_swarm(seed = seed, num_epochs=config['num_epochs'],
+                                                             lr=config['learning_rate']))
                 end_time = time.perf_counter()
                 helpers.print_one_run_time(start_time, end_time, name)
 
-            data_saver = save_data.SaveData(all_histories, config['num_tests'], name = name, save_path = experiment_name +'/')
+            data_saver = save_data.SaveData(all_histories, config['num_tests'], name = name, save_path = experiment_name +'/' )
             data_saver.save_all_data()
 
     all_end_time = time.perf_counter()
-    helpers.print_total_time(all_start_time, all_end_time, "MNIST")
-
+    helpers.print_total_time(all_start_time, all_end_time, "swarm")
