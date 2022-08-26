@@ -1,9 +1,9 @@
 {
-     "Synthetic Experiment FULL BATCHING high LR":
+     "Synthetic Experiment":
   [
     {
-      "num_tests": 100,
-      "num_epochs": 500,
+      "num_tests": 10,
+      "num_epochs": 1000,
       "learning_rate": 0.1
     }
   ]

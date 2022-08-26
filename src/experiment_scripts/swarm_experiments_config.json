@@ -1,8 +1,8 @@
 {
-     "Swarm Experiment 1500":
+     "Swarm Experiment":
   [
     {
-      "num_tests": 1,
+      "num_tests": 10,
       "num_epochs": 1500,
       "learning_rate": 0.1
     }
