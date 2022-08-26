@@ -1,6 +1,17 @@
-# autoencoder-paper
+# Autoencoder weight initialisation paper 
 
-## Initialising your local repo
+Training neural networks is a complex task with many interdependent hyper-parameters that each have to undergo a non-intuitive tuning
+process. Weight initialisation is generally overlooked in this process but
+can have a drastic impact on performance. We propose a nonstochashtic
+weight initialisation scheme that is an extension of the standard matrix
+identity and show that when benchmarked with a simple autoencoder
+on various datasets that our initialiser outperforms the current state of
+the art as measured by both convergence time and loss reached.
+
+## Setup 
+
+### Requirements
+
 When you first close this repo run the following commands to properly initialise your local development environment
 
 1. Create you local virtual environment (change python version as required):
@@ -8,30 +19,42 @@ When you first close this repo run the following commands to properly initialise
 python3.9 -m venv _venv
 ```
 
-2. Always activate and work only from the virtual environment:
+2. Activate and run only from the virtual environment:
 ```shell
 source _venv/bin/activate
 ```
 
-3. Install `pre-commit` hooks:
+3. Install the requirements:
 ```shell
-pre-commit install
+pip install -r requirements.txt
 ```
 
-## Default requirements
-The `requirements.txt` file contains default requirements which are often relevant to data repository work.
+### Data
 
-The `test-requirements.txt` file contains default requirements which are often relevant for the testing of data
-repository code.
+- `Synthetic`: created locally
+- `MNIST`: availible via Keras
+- `Swarm Behaviour`: needs to be downloaded from [this](https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification) link and moved into `autoencoder-paper/resources/swarmBehaviour`.
 
-Both of these requirements files are minimum recommendations but may be adjusted as necessary per project.
+## Running the experiments 
+Each experiment has a config file named `X_experiments_config.json`, where X is one of {swarm, mnist, synthetic} with the following format:
 
-## DVC
-When setting up DVC you must ensure that the `.dvc` files are located in the same folder as the file/folder they are
-representing. Placing the `.dvc` folder in a different path to its target may cause issues during some updates.
+```json
+{
+     "X Experiment":
+  [
+    {
+      "num_tests": 10,
+      "num_epochs": 1500,
+      "learning_rate": 0.1
+    }
+  ]
 
-## Set up your PyCharm IDE
-1. Ensure your Python interpreter is set to your local `_venv` virtual environment.
-You may need to restart PyCharm if you have updated you Python interpreter.
-2. Ensure when you open your PyCharm terminal tab that the shell running inside the virtual environment.
-You should see `(_venv)` at the start or end of the shell prompt.
+}
+```
+> Note: `num_tests` is the number of times the experiment is run with different random seeds. 
+
+To run the experiment for dataset `X` you run the following:
+```bash
+python experiment_scripts/X_experiments.py
+```
+
