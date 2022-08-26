@@ -58,3 +58,10 @@ To run the experiment for dataset `X` you run the following:
 python experiment_scripts/X_experiments.py
 ```
 
+### Plots and tables
+
+The main output of the experiments are the following figure and table generated in [make_plots.py](src/make_plots.py)
+
+#### Main figure
+
+<img src="https://user-images.githubusercontent.com/37986581/186881692-68e8d6f6-d72a-4251-9567-b1b7e2f6e278.png" width="500">
