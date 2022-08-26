@@ -6,6 +6,7 @@ from matplotlib import rc
 import seaborn as sns
 import numpy as np
 import pandas as pd
+from scipy import stats
 
 rc('font',**{'family':'serif','serif':['Founders Grotesk']})
 plt.rcParams.update({'font.size': 29})
@@ -112,7 +113,7 @@ class MakePlots():
         df['Converged Loss'] = converged_losses
         fig.savefig(self.save_path+f'{self.experiment_name}_all_initialisers.png')
         df = df.sort_values(by=['Converged Loss','Converged Epochs'])
-        return df.to_latex(index=False, label = f'{self.experiment_name} all initialisers')
+        return (df,df.to_latex(index=False, label = f'{self.experiment_name} all initialisers'))
 
     def pair_plot_epochs(self):
         for cnt, key in enumerate(self.val_losses.keys()):
@@ -149,18 +150,22 @@ class MakePlots():
 
         return False
 
-    def plot_dist_final_loss(self):
+    def plot_dist_final_loss(self,second_best):
         '''
         Plot the distribution of the final loss reached
         '''
-        epochs_glorot = self.make_losses_dict(self.val_losses['glorotnormal'][0])[self.num_epochs - 1]
+        second_best = second_best.iloc[1]['Initialiser']
+        epochs_glorot = self.make_losses_dict(self.val_losses[second_best][0])[self.num_epochs - 1]
         epochs_straddled = self.make_losses_dict(self.val_losses['straddled'][0])[self.num_epochs - 1]
 
         fig, axs = plt.subplots(1, 1, figsize=(30, 30))
-        sns.histplot(epochs_glorot, label='GlorotNorm', ax=axs, kde = True, color = 'red')
-        sns.histplot(epochs_straddled, label='Straddled', ax=axs, kde = True,color = 'blue')
+        sns.histplot(epochs_glorot, label=second_best, ax=axs, kde = True, color = 'red')
+        sns.histplot(epochs_straddled, label='straddled', ax=axs, kde = True,color = 'blue')
         axs.legend(loc="upper right")
-
+        p_value = np.round(stats.ttest_ind(epochs_straddled,epochs_glorot)[1],3)
+        print(f'Furthermore, performing a t-test on the distribution of the losses at the final epoch '
+              f'between straddled and the next best initialiser ({second_best}) revealed p-value of  {p_value} ')
+        print(second_best)
         fig.savefig(self.save_path + f'last_epoch_dist.png')
 
 
@@ -168,14 +173,13 @@ if __name__ == '__main__':
     plot_synthetic, plot_swarm, plot_mnist = True, False, False
 
     if plot_synthetic:
-        plots = MakePlots('Synthetic Experiment',
-                          'Synthetic Experiment[Straddled type = asymmetric | '
-                          'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
+        plots = MakePlots('Synthetic Experiment TEST',
+                          'Synthetic Experiment TEST [Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
 
         converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
-        plots.plot_dist_final_loss()
+        plots.plot_dist_final_loss(converged_df[0])
         print('Synthetic')
-        print(converged_df)
+        print(converged_df[1])
 
 
     if plot_swarm:
@@ -184,8 +188,9 @@ if __name__ == '__main__':
                           'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 500)
+        plots.plot_dist_final_loss(converged_df[0])
         print('Swarm Behaviour')
-        print(converged_df)
+        print(converged_df[1])
 
     if plot_mnist:
         plots = MakePlots('MNIST Experiment',
@@ -193,6 +198,6 @@ if __name__ == '__main__':
                           'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 250)
+        plots.plot_dist_final_loss(converged_df[0])
         print('MNIST')
-
-        print(converged_df)
+        print(converged_df[1])
