@@ -113,7 +113,7 @@ class MakePlots():
         df['Converged Loss'] = converged_losses
         fig.savefig(self.save_path+f'{self.experiment_name}_all_initialisers.png')
         df = df.sort_values(by=['Converged Loss','Converged Epochs'])
-        return (df,df.to_latex(index=False, label = f'{self.experiment_name} all initialisers'))
+        return (df,df.to_latex(index = False, label = f'{self.experiment_name} all initialisers'))
 
     def pair_plot_epochs(self):
         for cnt, key in enumerate(self.val_losses.keys()):
@@ -165,20 +165,33 @@ class MakePlots():
         p_value = np.round(stats.ttest_ind(epochs_straddled,epochs_glorot)[1],3)
         print(f'Furthermore, performing a t-test on the distribution of the losses at the final epoch '
               f'between straddled and the next best initialiser ({second_best}) revealed p-value of  {p_value} ')
-        print(second_best)
         fig.savefig(self.save_path + f'last_epoch_dist.png')
 
 
 if __name__ == '__main__':
     plot_synthetic, plot_swarm, plot_mnist = True, False, False
+    spacer = '-'*20
+
+    def print_experiment_title(name):
+        delim = '-' * (len(name) * 2)
+        space = ' ' * (len(name)//2)
+        print(f'{delim}\n{space}{name}\n{delim}\n')
+
+    def print_experiment_subtitle(name):
+        delim = "=" * (len(name)//2)
+        print(f'\n{delim} {name} {delim}\n')
+
 
     if plot_synthetic:
-        plots = MakePlots('Synthetic Experiment TEST',
-                          'Synthetic Experiment TEST [Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
+        plots = MakePlots('Synthetic Experiment',
+                          'Synthetic Experiment [Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
 
         converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
+
+        print_experiment_title('Synthetic Data')
+        print_experiment_subtitle('t-test (synthetic)')
         plots.plot_dist_final_loss(converged_df[0])
-        print('Synthetic')
+        print_experiment_subtitle('convergence latex table (synthetic)')
         print(converged_df[1])
 
 
@@ -188,8 +201,10 @@ if __name__ == '__main__':
                           'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 500)
+        print_experiment_title('Swarm Behaviour Data')
+        print_experiment_subtitle('t-test (swarm)')
         plots.plot_dist_final_loss(converged_df[0])
-        print('Swarm Behaviour')
+        print_experiment_subtitle('convergence latex table (swarm)')
         print(converged_df[1])
 
     if plot_mnist:
@@ -198,6 +213,8 @@ if __name__ == '__main__':
                           'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
 
         converged_df = plots.plot_all(epsilon = 0.005, alpha = 250)
+        print_experiment_title('MNIST')
+        print_experiment_subtitle('t-test (mnist)')
         plots.plot_dist_final_loss(converged_df[0])
-        print('MNIST')
+        print_experiment_subtitle('convergence latex table (mnist)')
         print(converged_df[1])
