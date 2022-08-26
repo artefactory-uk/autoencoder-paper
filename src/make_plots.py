@@ -112,6 +112,8 @@ class MakePlots():
         df['Converged Epochs'] = converged_epochs
         df['Converged Loss'] = converged_losses
         fig.savefig(self.save_path+f'{self.experiment_name}_all_initialisers.png')
+        fig.savefig(PLOTS_EXPERIMENT_PATH+f'main_figures/{self.experiment_name}_all_initialisers.png')
+
         df = df.sort_values(by=['Converged Loss','Converged Epochs'])
         return (df,df.to_latex(index = False, label = f'{self.experiment_name} all initialisers'))
 
@@ -168,53 +170,56 @@ class MakePlots():
         fig.savefig(self.save_path + f'last_epoch_dist.png')
 
 
-if __name__ == '__main__':
-    plot_synthetic, plot_swarm, plot_mnist = True, False, False
-    spacer = '-'*20
-
-    def print_experiment_title(name):
+def print_experiment_title(name):
         delim = '-' * (len(name) * 2)
         space = ' ' * (len(name)//2)
         print(f'{delim}\n{space}{name}\n{delim}\n')
 
-    def print_experiment_subtitle(name):
+
+def print_experiment_subtitle(name):
         delim = "=" * (len(name)//2)
         print(f'\n{delim} {name} {delim}\n')
 
 
+def display_experiment(title, dir_name, epsilon, alpha):
+    plots = MakePlots(dir_name,title)
+    converged_df = plots.plot_all(epsilon=epsilon, alpha=alpha)
+    print_experiment_title(dir_name)
+    print_experiment_subtitle(f't-test ({dir_name})')
+    plots.plot_dist_final_loss(converged_df[0])
+    print_experiment_subtitle(f'convergence latex table ({dir_name})')
+    print(converged_df[1])
+    print_experiment_subtitle(f'latex caption for main figure ({dir_name})')
+    print(f'{title}')
+
+
+if __name__ == '__main__':
+    plot_synthetic, plot_swarm, plot_mnist = True, False, False
+    spacer = '-'*20
+
     if plot_synthetic:
-        plots = MakePlots('Synthetic Experiment',
-                          'Synthetic Experiment [Straddled type = asymmetric | Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 100]')
-
-        converged_df = plots.plot_all(epsilon = 0.001, alpha = 100)
-
-        print_experiment_title('Synthetic Data')
-        print_experiment_subtitle('t-test (synthetic)')
-        plots.plot_dist_final_loss(converged_df[0])
-        print_experiment_subtitle('convergence latex table (synthetic)')
-        print(converged_df[1])
-
+        display_experiment(
+            title = 'Synthetic Experiment [Straddled type = asymmetric | Num. Epochs = 1000 | ' \
+                'Learning rate = 0.1 | Num. runs = 100]',
+            dir_name = 'Synthetic Experiment',
+            epsilon = 0.001,
+            alpha = 100
+        )
 
     if plot_swarm:
-        plots = MakePlots('Swarm Experiment',
-                          'Swarm Experiment[Straddled type = asymmetric | '
-                          'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]')
-
-        converged_df = plots.plot_all(epsilon = 0.005, alpha = 500)
-        print_experiment_title('Swarm Behaviour Data')
-        print_experiment_subtitle('t-test (swarm)')
-        plots.plot_dist_final_loss(converged_df[0])
-        print_experiment_subtitle('convergence latex table (swarm)')
-        print(converged_df[1])
+        display_experiment(
+            title='Swarm Experiment[Straddled type = asymmetric | ' \
+                'Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]',
+            dir_name='Swarm Experiment',
+            epsilon=0.005,
+            alpha=500
+        )
 
     if plot_mnist:
-        plots = MakePlots('MNIST Experiment',
-                          'MNIST Experiment\n[Straddled type = asymmetric | '
-                          'Num. Epochs = 1000 | Learning rate = 0.1 | Num. runs = 1]')
-
-        converged_df = plots.plot_all(epsilon = 0.005, alpha = 250)
-        print_experiment_title('MNIST')
-        print_experiment_subtitle('t-test (mnist)')
-        plots.plot_dist_final_loss(converged_df[0])
-        print_experiment_subtitle('convergence latex table (mnist)')
-        print(converged_df[1])
+        display_experiment(
+            title='MNIST Experiment[Straddled type = asymmetric | Num. Epochs = 1000 | ' \
+                         'Learning rate = 0.1 | Num. runs = 1]',
+            dir_name='MNIST Experiment',
+            epsilon=0.005,
+            alpha=250
+        )
