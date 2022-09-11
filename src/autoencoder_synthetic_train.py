@@ -69,10 +69,17 @@ def run_experiments_synthetic(num_epochs, lr):
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
-    histories = run_experiments(train_data_df, test_data_df, run_type, SYNTHETIC_EXPERIMENT_PATH,
-                                num_epochs=num_epochs, lr=lr)
+    histories = run_experiments(
+        train_data_df,
+        test_data_df,
+        run_type,
+        SYNTHETIC_EXPERIMENT_PATH,
+        num_epochs=num_epochs,
+        lr=lr,
+    )
 
     return histories
+
 
 def process_experiments_synthetic():
     list_of_runs = []
@@ -81,16 +88,17 @@ def process_experiments_synthetic():
             f"training_curves_synthetic_100_features_32node_{key}_0.001lr_50epochs.csv"
         )
     create_outputs_for_runs(
-        list_of_runs, "different_initialisers_0p001lr_synthetic_100_features",
-        SYNTHETIC_EXPERIMENT_PATH
+        list_of_runs,
+        "different_initialisers_0p001lr_synthetic_100_features",
+        SYNTHETIC_EXPERIMENT_PATH,
     )
 
 
 def run_synthetic(seed, num_epochs, lr):
     set_seeds(seed)
     run_histories = run_experiments_synthetic(num_epochs, lr)
-    process_experiments_synthetic()
     return run_histories
+
 
 if __name__ == "__main__":
     run_synthetic(1, 100, 0.001)

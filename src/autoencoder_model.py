@@ -13,6 +13,7 @@ import pathlib
 def root_mean_squared_error(y_true, y_pred):
     return K.sqrt(mean_squared_error(y_true, y_pred))
 
+
 def set_seeds(x):
     np.random.seed(x)
     tf.random.set_seed(x)
@@ -34,22 +35,41 @@ INITIALISER_DICT = {
 }
 
 
-def straddled_matrix(shape1, shape2, add_glorot = False, symmetric= False):
+def recurrent_identity_matrix(shape1, shape2):
+    if shape1 == shape2:
+        return np.identity(shape1)
+    elif shape1 > shape2:
+        matrix_without_zeroes = np.concatenate(
+            [np.identity(shape2)] * (shape1 // shape2), axis=0
+        )
+        return np.concatenate(
+            (matrix_without_zeroes, np.zeros((shape1 % shape2, shape2))), axis=0
+        )
+    else:
+        matrix_without_zeroes = np.concatenate(
+            [np.identity(shape1)] * (shape2 // shape1), axis=1
+        )
+        return np.concatenate(
+            (matrix_without_zeroes, np.zeros((shape1, shape2 % shape1))), axis=1
+        )
+
+
+def straddled_matrix(shape1, shape2, add_glorot=False, symmetric=False):
     initializer = tf.keras.initializers.GlorotUniform()
     glorot_uniform = initializer(shape=(shape1, shape2))
 
     def tall_straddled(shape1, shape2):
-      small_matrix = np.identity(shape2)
-      matrix = small_matrix
-      for i in range(ceil(shape1 / shape2)):
-          matrix = np.concatenate((matrix, small_matrix), axis=0)
-      return matrix[:shape1, :]
+        small_matrix = np.identity(shape2)
+        matrix = small_matrix
+        for i in range(ceil(shape1 / shape2)):
+            matrix = np.concatenate((matrix, small_matrix), axis=0)
+        return matrix[:shape1, :]
 
     if symmetric:
         if shape1 >= shape2:
-            straddled = tall_straddled(shape1,shape2)
+            straddled = tall_straddled(shape1, shape2)
         else:
-            straddled = tall_straddled(shape2,shape1).T
+            straddled = tall_straddled(shape2, shape1).T
     else:
         straddled = tall_straddled(shape1, shape2)
 
@@ -58,6 +78,7 @@ def straddled_matrix(shape1, shape2, add_glorot = False, symmetric= False):
         straddled = straddled.numpy()
 
     return straddled
+
 
 class AnomalyDetector(tf.keras.Model):
     def __init__(
@@ -138,14 +159,12 @@ class AnomalyDetector(tf.keras.Model):
                         first_layer_size,
                         activation="relu",
                         use_bias=True,
-
                         kernel_initializer=initialiser,
                     ),
                     layers.Dense(
                         no_of_features,
                         activation="sigmoid",
                         use_bias=True,
-
                         kernel_initializer=initialiser,
                     ),
                 ]
@@ -162,7 +181,6 @@ class AnomalyDetector(tf.keras.Model):
         return decoded
 
 
-
 def train_autoencoder(
     train_data_df,
     test_data_df,
@@ -172,7 +190,7 @@ def train_autoencoder(
     nodesize=32,
     initialiser="straddled",
     run_type="all_layers",
-    batch_size = FULL_BATCH_SIZE
+    batch_size=FULL_BATCH_SIZE,
 ):
     """
     run_type options:
@@ -184,10 +202,9 @@ def train_autoencoder(
         train_data = train_data_df.to_numpy()
         test_data = test_data_df.to_numpy()
     except AttributeError as e:
-        print(f'Data is already in np form: {e}')
+        print(f"Data is already in np form: {e}")
         train_data = train_data_df
         test_data = test_data_df
-
 
     train_data = tf.cast(train_data, tf.float32)
     test_data_original = test_data.copy()
@@ -200,12 +217,18 @@ def train_autoencoder(
         FIRST_LAYER_SIZE, no_of_features, nodesize, initialiser, run_type
     )
 
-    optimizer = optimizers.SGD(learning_rate=learning_rate,momentum=0.0)
-    autoencoder.compile(optimizer=optimizer, loss= root_mean_squared_error)
+    optimizer = optimizers.SGD(learning_rate=learning_rate, momentum=0.0)
+    autoencoder.compile(optimizer=optimizer, loss=root_mean_squared_error)
 
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = "experiments/logs",write_grads = True,histogram_freq=1)
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(
+        log_dir="experiments/logs", write_grads=True, histogram_freq=1
+    )
 
-    LambdaCallback(on_epoch_end=lambda batch, logs: tf.summary.histogram('Weights', autoencoder.get_weights()))
+    LambdaCallback(
+        on_epoch_end=lambda batch, logs: tf.summary.histogram(
+            "Weights", autoencoder.get_weights()
+        )
+    )
     LambdaCallback(on_epoch_end=lambda batch, logs: print(autoencoder.get_weights()))
 
     history = autoencoder.fit(
@@ -213,8 +236,8 @@ def train_autoencoder(
         train_data,
         epochs=no_of_epochs,
         validation_data=(test_data, test_data),
-        batch_size = batch_size,
-        callbacks = [tensorboard_callback]
+        batch_size=batch_size,
+        callbacks=[tensorboard_callback],
     )
 
     plt.figure()
@@ -294,13 +317,14 @@ def run_autoencoder(autoencoder_folder, data):
     return autoencoder.predict(data)
 
 
-def run_experiments(train, test, run_type, experiment_path,
-                    num_epochs, lr, batch_size = FULL_BATCH_SIZE):
+def run_experiments(
+    train, test, run_type, experiment_path, num_epochs, lr, batch_size=FULL_BATCH_SIZE
+):
     train_data_df, test_data_df = train, test
 
     file = pathlib.Path(experiment_path)
     if not file.exists():
-        raise FileExistsError('The experiment folder does not exist.')
+        raise FileExistsError("The experiment folder does not exist.")
 
     run_histories = []
     for key in INITIALISER_DICT:
@@ -313,9 +337,9 @@ def run_experiments(train, test, run_type, experiment_path,
             nodesize=32,
             initialiser=key,
             run_type=run_type,
-            batch_size=batch_size
+            batch_size=batch_size,
         )
-        run_histories.append((key,history))
+        run_histories.append((key, history))
     return run_histories
 
 
@@ -327,8 +351,7 @@ def process_experiments(name="", experiment_path=""):
                 f"training_curves_all_layers_32node_{key}_2000epochs.csv",
             )
         create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0001lr",
-            experiment_path
+            list_of_runs, f"[{name}]different_initialisers_0p0001lr", experiment_path
         )
     except:
         print("No 2000 epochs")
@@ -338,8 +361,7 @@ def process_experiments(name="", experiment_path=""):
         for key in INITIALISER_DICT:
             list_of_runs.append(f"training_curves_fasterLR_32node_{key}_1000epochs.csv")
         create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0002lr",
-            experiment_path
+            list_of_runs, f"[{name}]different_initialisers_0p0002lr", experiment_path
         )
     except:
         print("No 1000 epochs")
@@ -351,7 +373,7 @@ def process_experiments(name="", experiment_path=""):
                 f"training_curves_no_batching_32node_{key}_0.0005lr_200epochs.csv"
             )
         create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0005lr",experiment_path
+            list_of_runs, f"[{name}]different_initialisers_0p0005lr", experiment_path
         )
     except:
         print("No 200 epochs")
@@ -362,6 +384,8 @@ def process_experiments(name="", experiment_path=""):
             list_of_runs.append(
                 f"training_curves_no_batching_32node_{key}_0.001lr_50epochs.csv"
             )
-        create_outputs_for_runs(list_of_runs, f"[{name}]different_initialisers_0p001lr",experiment_path)
+        create_outputs_for_runs(
+            list_of_runs, f"[{name}]different_initialisers_0p001lr", experiment_path
+        )
     except:
         print("No 50 epochs")
