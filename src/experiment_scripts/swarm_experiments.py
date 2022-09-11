@@ -4,36 +4,48 @@ import time
 import os
 import helpers
 
-'''
-This script runs experiments on the Swarm Behaviour dataset 
-'''
+
 dir_path = os.path.abspath(os.path.dirname(__file__))
-CONFIG_FILENAME = dir_path+'/swarm_experiments_config.json'
+CONFIG_FILENAME = dir_path + "/swarm_experiments_config.json"
 
 all_experiments, all_experiments_names = helpers.read_config_file(CONFIG_FILENAME)
 
 if __name__ == "__main__":
+    """
+    This script runs experiments on the Swarm Behaviour dataset
+    """
     all_start_time = time.perf_counter()
 
     for experiment_name in all_experiments_names:
-        print(f'Running: {experiment_name}')
+        print(f"Running: {experiment_name}")
         helpers.make_experiment_dir(experiment_name)
+        helpers.make_missing_dir("experiments/swarmBehaviour")
 
         for config in all_experiments[experiment_name]:
             name = helpers.construct_name(config, experiment_name)
 
-            seeds = list(range(config['num_tests']))
+            seeds = list(range(config["num_tests"]))
             all_histories = []
 
             for seed in seeds:
                 start_time = time.perf_counter()
 
-                all_histories.append(swarm.run_swarm(seed = seed, num_epochs=config['num_epochs'],
-                                                             lr=config['learning_rate']))
+                all_histories.append(
+                    swarm.run_swarm(
+                        seed=seed,
+                        num_epochs=config["num_epochs"],
+                        lr=config["learning_rate"],
+                    )
+                )
                 end_time = time.perf_counter()
                 helpers.print_one_run_time(start_time, end_time, name)
 
-            data_saver = save_data.SaveData(all_histories, config['num_tests'], name = name, save_path = experiment_name +'/' )
+            data_saver = save_data.SaveData(
+                all_histories,
+                config["num_tests"],
+                name=name,
+                save_path=experiment_name + "/",
+            )
             data_saver.save_all_data()
 
     all_end_time = time.perf_counter()
