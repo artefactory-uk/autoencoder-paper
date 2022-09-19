@@ -25,13 +25,13 @@ STRADDLED = True
 
 INITIALISER_DICT = {
     "straddled": "straddled",
-    # "glorotuniform": tf.keras.initializers.GlorotUniform(),
+    "glorotuniform": tf.keras.initializers.GlorotUniform(),
     "glorotnormal": tf.keras.initializers.GlorotNormal(),
-    # "identity": tf.keras.initializers.Identity(),
-    # "henormal": tf.keras.initializers.HeNormal(),
-    # "heuniform": tf.keras.initializers.HeUniform(),
-    # "orthogonal": tf.keras.initializers.Orthogonal(),
-    # "random": tf.keras.initializers.RandomNormal(),
+    "identity": tf.keras.initializers.Identity(),
+    "henormal": tf.keras.initializers.HeNormal(),
+    "heuniform": tf.keras.initializers.HeUniform(),
+    "orthogonal": tf.keras.initializers.Orthogonal(),
+    "random": tf.keras.initializers.RandomNormal(),
 }
 
 
