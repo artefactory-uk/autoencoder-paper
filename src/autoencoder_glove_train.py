@@ -50,13 +50,12 @@ def load_glove_model(File, cache=False):
     return glove_model
 
 
-def run_glove(seed, num_epochs, lr):
+def run_glove(seed, num_epochs, lr, middle_node_size):
     set_seeds(seed)
     file_name = "glove.twitter.27B.100d"
     file_extension = ".txt"
     glove_twitter_data = load_glove_model(
-        GLOVE_DATA_BASE_PATH + file_name + file_extension,
-        cache=True
+        GLOVE_DATA_BASE_PATH + file_name + file_extension, cache=True
     )
     run_type = "no_batching"
 
@@ -65,13 +64,21 @@ def run_glove(seed, num_epochs, lr):
     shuffle_glove_twitter_data = shuffle(glove_twitter_data)
     train_set, test_set = (
         shuffle_glove_twitter_data[:sample_size],
-        shuffle_glove_twitter_data[sample_size + 1: (sample_size + 1) * 2],
+        shuffle_glove_twitter_data[sample_size + 1 : (sample_size + 1) * 2],
     )
 
-    run_histories = run_experiments(train_set, test_set, run_type=run_type, experiment_path=GLOVE_EXPERIMENT_PATH,
-                                    num_epochs=num_epochs, lr=lr)
+    run_histories = run_experiments(
+        train_set,
+        test_set,
+        run_type=run_type,
+        experiment_path=GLOVE_EXPERIMENT_PATH,
+        num_epochs=num_epochs,
+        lr=lr,
+        middle_node_size=middle_node_size,
+    )
     process_experiments(name=file_name, experiment_path=GLOVE_EXPERIMENT_PATH)
     return run_histories
+
 
 if __name__ == "__main__":
     run_glove()

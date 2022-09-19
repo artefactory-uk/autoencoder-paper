@@ -318,7 +318,14 @@ def run_autoencoder(autoencoder_folder, data):
 
 
 def run_experiments(
-    train, test, run_type, experiment_path, num_epochs, lr, batch_size=FULL_BATCH_SIZE
+    train,
+    test,
+    run_type,
+    experiment_path,
+    num_epochs,
+    lr,
+    middle_node_size,
+    batch_size=FULL_BATCH_SIZE,
 ):
     train_data_df, test_data_df = train, test
 
@@ -334,7 +341,7 @@ def run_experiments(
             experiment_path,
             no_of_epochs=num_epochs,
             learning_rate=lr,
-            nodesize=32,
+            nodesize=middle_node_size,
             initialiser=key,
             run_type=run_type,
             batch_size=batch_size,

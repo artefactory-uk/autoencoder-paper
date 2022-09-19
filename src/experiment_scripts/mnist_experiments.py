@@ -3,7 +3,7 @@ import src.autoencoder_mnist_train as mnist
 import time
 import os
 import helpers
-
+from paths import MNIST_EXPERIMENT_PATH
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 CONFIG_FILENAME = dir_path + "/mnist_experiments_config.json"
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     for experiment_name in all_experiments_names:
         print(f"Running: {experiment_name}")
         helpers.make_experiment_dir(experiment_name)
-        helpers.make_missing_dir("experiments/MNIST")
+        helpers.make_missing_dir(MNIST_EXPERIMENT_PATH)
 
         for config in all_experiments[experiment_name]:
             name = helpers.construct_name(config, experiment_name)
@@ -32,9 +32,10 @@ if __name__ == "__main__":
                 all_histories.append(
                     mnist.run_mnist(
                         seed=seed,
-                        sample_size=config["sample_size"],
                         num_epochs=config["num_epochs"],
                         lr=config["learning_rate"],
+                        middle_node_size=config["middle_node_size"],
+                        sample_size=config["sample_size"],
                     )
                 )
                 end_time = time.perf_counter()

@@ -3,7 +3,7 @@ import src.autoencoder_synthetic_train as synthetic
 import time
 import os
 import helpers
-
+from paths import SYNTHETIC_EXPERIMENT_PATH
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 SYNTHETIC_CONFIG_FILENAME = dir_path + "/synthetic_experiments_config.json"
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     for experiment_name in all_experiments_names:
         print(f"Running: {experiment_name}")
         helpers.make_experiment_dir(experiment_name)
-        helpers.make_missing_dir("experiments/synthetic")
+        helpers.make_missing_dir(SYNTHETIC_EXPERIMENT_PATH)
 
         for config in all_experiments[experiment_name]:
             name = helpers.construct_name(config, experiment_name)
@@ -37,6 +37,7 @@ if __name__ == "__main__":
                         seed=seed,
                         num_epochs=config["num_epochs"],
                         lr=config["learning_rate"],
+                        middle_node_size=config["middle_node_size"],
                     )
                 )
                 end_time = time.perf_counter()

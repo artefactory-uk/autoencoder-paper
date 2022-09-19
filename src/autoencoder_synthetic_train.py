@@ -65,7 +65,7 @@ def prepare_synthetic_data(data):
     return train, test
 
 
-def run_experiments_synthetic(num_epochs, lr):
+def run_experiments_synthetic(num_epochs, lr, middle_node_size):
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
@@ -76,6 +76,7 @@ def run_experiments_synthetic(num_epochs, lr):
         SYNTHETIC_EXPERIMENT_PATH,
         num_epochs=num_epochs,
         lr=lr,
+        middle_node_size=middle_node_size,
     )
 
     return histories
@@ -94,11 +95,11 @@ def process_experiments_synthetic():
     )
 
 
-def run_synthetic(seed, num_epochs, lr):
+def run_synthetic(seed, num_epochs, lr, middle_node_size):
     set_seeds(seed)
-    run_histories = run_experiments_synthetic(num_epochs, lr)
+    run_histories = run_experiments_synthetic(num_epochs, lr, middle_node_size)
     return run_histories
 
 
 if __name__ == "__main__":
-    run_synthetic(1, 100, 0.001)
+    run_synthetic(1, 100, 0.001, 32)
