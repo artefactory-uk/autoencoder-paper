@@ -1,8 +1,8 @@
 import pandas as pd
-from src.autoencoder_model import run_experiments, process_experiments, set_seeds
-
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
+
+from src.autoencoder_model import run_experiments, process_experiments, set_seeds
 from src.paths import SWARM_DATA_PATH, SWARM_EXPERIMENT_PATH
 
 

@@ -1,8 +1,9 @@
-import src.autoencoder_glove_train as glove
-import src.confidence_intervals as confidence_intervals
 import json
 import time
 import os
+
+import src.autoencoder_glove_train as glove
+import src.confidence_intervals as confidence_intervals
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 GLOVE_CONFIG_FILENAME = dir_path + "/glove_experiments_config.json"

@@ -1,9 +1,10 @@
-import src.save_data as save_data
-import src.autoencoder_swarm_behaviour_train as swarm
 import time
 import os
 import helpers
-from paths import SWARM_EXPERIMENT_PATH
+
+import src.save_data as save_data
+import src.autoencoder_swarm_behaviour_train as swarm
+from src.paths import SWARM_EXPERIMENT_PATH
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 CONFIG_FILENAME = dir_path + "/swarm_experiments_config.json"

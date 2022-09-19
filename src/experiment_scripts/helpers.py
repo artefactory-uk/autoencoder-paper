@@ -1,6 +1,7 @@
 import json
-from src.paths import PLOTS_EXPERIMENT_PATH
 from pathlib import Path
+
+from src.paths import PLOTS_EXPERIMENT_PATH
 
 
 def read_config_file(file_path):

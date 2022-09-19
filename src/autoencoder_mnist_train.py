@@ -1,7 +1,8 @@
 import numpy as np
+from tensorflow.keras.datasets import mnist
+
 from src.autoencoder_model import run_experiments, process_experiments, set_seeds
 from src.paths import MNIST_EXPERIMENT_PATH
-from tensorflow.keras.datasets import mnist
 
 
 def run_mnist(seed, num_epochs, lr, middle_node_size, sample_size=1):

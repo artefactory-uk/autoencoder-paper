@@ -1,9 +1,10 @@
-import src.save_data as save_data
-import src.autoencoder_mnist_train as mnist
 import time
 import os
 import helpers
-from paths import MNIST_EXPERIMENT_PATH
+
+import src.save_data as save_data
+import src.autoencoder_mnist_train as mnist
+from src.paths import MNIST_EXPERIMENT_PATH
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 CONFIG_FILENAME = dir_path + "/mnist_experiments_config.json"

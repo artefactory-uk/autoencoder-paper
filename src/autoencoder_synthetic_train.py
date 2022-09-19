@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from src.paths import SYNTHETIC_EXPERIMENT_PATH
 
+from src.paths import SYNTHETIC_EXPERIMENT_PATH
 from src.autoencoder_helper_functions import scale_dataset
 from src.autoencoder_model import (
     set_seeds,

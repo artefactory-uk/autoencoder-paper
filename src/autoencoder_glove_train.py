@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-
-from src.autoencoder_model import run_experiments, process_experiments, set_seeds
-
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
+
+from src.autoencoder_model import run_experiments, process_experiments, set_seeds
 from src.paths import GLOVE_DATA_BASE_PATH, GLOVE_EXPERIMENT_PATH
 
 

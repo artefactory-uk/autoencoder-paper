@@ -1,4 +1,3 @@
-from paths import PLOTS_EXPERIMENT_PATH
 import confidence_intervals as confidence_intervals
 import pickle
 import matplotlib.pyplot as plt
@@ -7,6 +6,8 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 from scipy import stats
+
+from src.paths import PLOTS_EXPERIMENT_PATH
 import experiment_scripts.helpers as helpers
 
 rc("font", **{"family": "serif", "serif": ["Founders Grotesk"]})
