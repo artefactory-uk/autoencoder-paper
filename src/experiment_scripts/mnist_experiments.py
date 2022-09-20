@@ -27,7 +27,7 @@ if __name__ == "__main__":
             seeds = list(range(config["num_tests"]))
             all_histories = []
 
-            for seed in seeds:
+            for run_number, seed in enumerate(seeds):
                 start_time = time.perf_counter()
 
                 all_histories.append(
@@ -42,13 +42,13 @@ if __name__ == "__main__":
                 end_time = time.perf_counter()
                 helpers.print_one_run_time(start_time, end_time, name)
 
-            data_saver = save_data.SaveData(
-                all_histories,
-                config["num_tests"],
-                name=name,
-                save_path=experiment_name + "/",
-            )
-            data_saver.save_all_data()
+                data_saver = save_data.SaveData(
+                    all_histories,
+                    run_number + 1,
+                    name=name,
+                    save_path=experiment_name + "/",
+                )
+                data_saver.save_all_data()
 
     all_end_time = time.perf_counter()
     helpers.print_total_time(all_start_time, all_end_time, "MNIST")
