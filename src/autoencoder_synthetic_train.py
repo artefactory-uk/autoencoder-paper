@@ -46,7 +46,7 @@ def transform_vector(input_vector):
 
 
 def create_synthetic_data():
-    prng = np.random.RandomState(60)
+    prng = np.random.RandomState(50)
     dataset = np.empty((FINAL_DIM, 0), int)
     for i in range(DATASET_SIZE):
         random_vector = prng.randn(

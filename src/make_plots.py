@@ -55,7 +55,7 @@ class MakePlots:
         straddled_lower, straddled_means, straddled_upper = self.CI.get_intervals(
             epochs_straddled
         )
-        return key_means, straddled_means
+        return key_means, straddled_means, key_lower, key_upper
 
     def plot_epochs(self, axs, losses, name):
         first_epochs, last_epochs = [], []
@@ -104,10 +104,9 @@ class MakePlots:
 
         for cnt, key in enumerate(self.val_losses.keys()):
 
-            key_means_train, straddled_means_train = self.get_points_to_plot(
-                key, self.train_losses
+            key_means_val, _, key_low_val, key_high_val = self.get_points_to_plot(
+                key, self.val_losses
             )
-            key_means_val, _ = self.get_points_to_plot(key, self.val_losses)
             converged_points = self.convergence_criteria(key_means_val, epsilon, alpha)
             axs.plot(
                 self.epochs_list,
@@ -115,6 +114,13 @@ class MakePlots:
                 label=key + " validation",
                 linewidth=3,
                 color=self.color_map[cnt],
+            )
+            axs.fill_between(
+                self.epochs_list,
+                (key_low_val),
+                (key_high_val),
+                color=self.color_map[cnt],
+                alpha=0.1,
             )
 
             if converged_points != False:
@@ -152,7 +158,6 @@ class MakePlots:
             + f"main_figures/{self.experiment_name}_all_initialisers.png"
         )
 
-        df = df.sort_values(by=["Converged Loss", "Converged Epochs"])
         return (
             df,
             df.to_latex(index=False, label=f"{self.experiment_name} all initialisers"),
@@ -162,10 +167,10 @@ class MakePlots:
         for cnt, key in enumerate(self.val_losses.keys()):
             fig, axs = plt.subplots(1, 1, figsize=(30, 30))
 
-            key_means_train, straddled_means_train = self.get_points_to_plot(
+            key_means_train, straddled_means_train, *_ = self.get_points_to_plot(
                 key, self.train_losses
             )
-            key_means_val, straddled_means_val = self.get_points_to_plot(
+            key_means_val, straddled_means_val, *_ = self.get_points_to_plot(
                 key, self.val_losses
             )
 
@@ -270,7 +275,7 @@ def display_experiment(title, dir_name, epsilon, alpha):
 
 
 if __name__ == "__main__":
-    plot_synthetic, plot_swarm, plot_mnist = True, False, False
+    plot_synthetic, plot_swarm, plot_mnist = True, True, True
     spacer = "-" * 20
 
     if plot_synthetic:
@@ -285,7 +290,7 @@ if __name__ == "__main__":
     if plot_swarm:
         display_experiment(
             title="Swarm Experiment[Straddled type = asymmetric | "
-            "Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 1]",
+            "Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 10]",
             dir_name="Swarm Experiment",
             epsilon=0.005,
             alpha=500,
@@ -294,7 +299,7 @@ if __name__ == "__main__":
     if plot_mnist:
         display_experiment(
             title="MNIST Experiment[Straddled type = asymmetric | Num. Epochs = 1000 | "
-            "Learning rate = 0.1 | Num. runs = 1]",
+            "Learning rate = 0.1 | Num. runs = 10]",
             dir_name="MNIST Experiment",
             epsilon=0.005,
             alpha=250,
