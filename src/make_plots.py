@@ -100,6 +100,7 @@ class MakePlots:
     def plot_all(self, epsilon, alpha):
         df = pd.DataFrame()
         converged_epochs, converged_losses = [], []
+        plt.rcParams.update({"font.size": 45})
         fig, axs = plt.subplots(1, 1, figsize=(35, 20))
 
         for cnt, key in enumerate(self.val_losses.keys()):
@@ -111,8 +112,8 @@ class MakePlots:
             axs.plot(
                 self.epochs_list,
                 key_means_val,
-                label=key + " validation",
-                linewidth=3,
+                label=key,
+                linewidth=4,
                 color=self.color_map[cnt],
             )
             axs.fill_between(
@@ -131,7 +132,7 @@ class MakePlots:
                 axs.scatter(
                     converged_epoch,
                     converged_loss,
-                    s=500,
+                    s=600,
                     marker="d",
                     color=self.color_map[cnt],
                 )
@@ -141,21 +142,20 @@ class MakePlots:
                 converged_epochs.append(np.nan)
                 converged_losses.append(np.nan)
 
+        axs.scatter([], [], s=500, color="black", marker="d", label="convergence")
         axs.legend(loc="upper right")
-        axs.set_title(
-            f"{self.file_name}\n [$ \\epsilon = {epsilon}$, $\\alpha = {alpha}$]"
-        )
 
-        axs.set_xlabel("Epoch")
-        axs.set_ylabel("Loss")
+        axs.axis(xmin=self.epochs_list[0], xmax=self.epochs_list[-1])
+        axs.set_xlabel("Epoch", fontsize=60)
+        axs.set_ylabel("Loss", fontsize=60)
         df["Initialiser"] = list(self.val_losses.keys())
         df["Converged Epochs"] = converged_epochs
         df["Converged Loss"] = converged_losses
-        fig.savefig(self.save_path + f"{self.experiment_name}_all_initialisers.png")
+        fig.savefig(self.save_path + f"{self.experiment_name}_all_initialisers.pdf")
         helpers.make_missing_dir(PLOTS_EXPERIMENT_PATH + f"main_figures/")
         fig.savefig(
             PLOTS_EXPERIMENT_PATH
-            + f"main_figures/{self.experiment_name}_all_initialisers.png"
+            + f"main_figures/{self.experiment_name}_all_initialisers.pdf"
         )
 
         return (
