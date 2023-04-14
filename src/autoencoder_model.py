@@ -170,6 +170,11 @@ class AnomalyDetector(tf.keras.Model):
                 ]
             )
 
+    def call(self, x: tf.Tensor, **kwargs) -> tf.Tensor:
+        encoded = self.encoder(x)
+        decoded = self.decoder(encoded)
+        return decoded
+
     def decoded_latent_space(self, x: tf.Tensor) -> tf.Tensor:
         encoded = self.encoder.predict(x)
         decoded = self.decoder.predict(encoded)
