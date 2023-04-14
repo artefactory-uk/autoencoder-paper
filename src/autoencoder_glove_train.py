@@ -7,14 +7,14 @@ from src.autoencoder_model import run_experiments, process_experiments, set_seed
 from src.paths import GLOVE_DATA_BASE_PATH, GLOVE_EXPERIMENT_PATH
 
 
-def load_glove_model(File, cache=False):
+def load_glove_model(filename: str, cache: bool = False) -> pd.DataFrame:
     print("Loading Glove Model...")
-    file_name = f"{File}.pkl"
+    file_name = f"{filename}.pkl"
     if cache:
         print("Loading from cache.")
         glove_model = pd.read_pickle(file_name)
     else:
-        with open(File, encoding="utf-8") as f:
+        with open(filename, encoding="utf-8") as f:
             col_names = [
                 "dim" + str(dim[0]) for dim in enumerate(f.readline().split()[1:])
             ]
@@ -49,7 +49,7 @@ def load_glove_model(File, cache=False):
     return glove_model
 
 
-def run_glove(seed, num_epochs, lr, middle_node_size):
+def run_glove(seed: int, num_epochs: int, lr: float, middle_node_size: int) -> list:
     set_seeds(seed)
     file_name = "glove.twitter.27B.100d"
     file_extension = ".txt"
@@ -80,4 +80,4 @@ def run_glove(seed, num_epochs, lr, middle_node_size):
 
 
 if __name__ == "__main__":
-    run_glove()
+    run_glove(0, 1800, 0.0001, 33)
