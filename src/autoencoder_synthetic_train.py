@@ -14,7 +14,7 @@ FINAL_DIM = 100
 DATASET_SIZE = 5000
 
 
-def transform_vector(input_vector):
+def transform_vector(input_vector: np.ndarray) -> np.ndarray:
     prng2 = np.random.RandomState(2019)
     unfolded_vector = np.repeat(input_vector, repeats=FINAL_DIM, axis=0)
     possible_funcs = [
@@ -43,7 +43,7 @@ def transform_vector(input_vector):
     return transformed_values_vector
 
 
-def create_synthetic_data():
+def create_synthetic_data() -> pd.DataFrame:
     prng = np.random.RandomState(50)
     dataset = np.empty((FINAL_DIM, 0), int)
     for i in range(DATASET_SIZE):
@@ -55,7 +55,7 @@ def create_synthetic_data():
     return pd.DataFrame.from_records(dataset)
 
 
-def prepare_synthetic_data(data):
+def prepare_synthetic_data(data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     scaled_data = scale_dataset(
         data, "autoencoder_synthetic", SYNTHETIC_EXPERIMENT_PATH, rescale=True
     )
@@ -63,7 +63,10 @@ def prepare_synthetic_data(data):
     return train, test
 
 
-def run_experiments_synthetic(num_epochs, lr, middle_node_size):
+def run_experiments_synthetic(num_epochs: int,
+                              lr: float,
+                              middle_node_size: int
+                              ) -> list:
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
@@ -79,7 +82,11 @@ def run_experiments_synthetic(num_epochs, lr, middle_node_size):
 
     return histories
 
-def run_synthetic(seed, num_epochs, lr, middle_node_size):
+def run_synthetic(seed: int,
+                  num_epochs: int,
+                  lr: float,
+                  middle_node_size: int
+                  ) -> list:
     set_seeds(seed)
     run_histories = run_experiments_synthetic(num_epochs, lr, middle_node_size)
     return run_histories
