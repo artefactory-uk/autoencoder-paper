@@ -10,18 +10,8 @@ from tensorflow.keras.callbacks import LambdaCallback
 import pathlib
 
 
-def root_mean_squared_error(y_true, y_pred):
-    return K.sqrt(mean_squared_error(y_true, y_pred))
-
-
-def set_seeds(x):
-    np.random.seed(x)
-    tf.random.set_seed(x)
-
-
 FULL_BATCH_SIZE = 9999999
 FIRST_LAYER_SIZE = 64
-STRADDLED = True
 
 INITIALISER_DICT = {
     "straddled": "straddled",
@@ -34,8 +24,14 @@ INITIALISER_DICT = {
     "random": tf.keras.initializers.RandomNormal(),
 }
 
+def root_mean_squared_error(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
+    return K.sqrt(mean_squared_error(y_true, y_pred))
 
-def recurrent_identity_matrix(shape1, shape2):
+def set_seeds(x: int):
+    np.random.seed(x)
+    tf.random.set_seed(x)
+
+def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
     if shape1 == shape2:
         return np.identity(shape1)
     elif shape1 > shape2:
@@ -53,12 +49,11 @@ def recurrent_identity_matrix(shape1, shape2):
             (matrix_without_zeroes, np.zeros((shape1, shape2 % shape1))), axis=1
         )
 
-
-def straddled_matrix(shape1, shape2, add_glorot=False, symmetric=False):
+def straddled_matrix(shape1: int, shape2: int, add_glorot: bool=False, symmetric: bool=False) -> np.ndarray:
     initializer = tf.keras.initializers.GlorotUniform()
     glorot_uniform = initializer(shape=(shape1, shape2))
 
-    def tall_straddled(shape1, shape2):
+    def tall_straddled(shape1: int, shape2: int) -> np.ndarray:
         small_matrix = np.identity(shape2)
         matrix = small_matrix
         for i in range(ceil(shape1 / shape2)):
@@ -83,11 +78,10 @@ def straddled_matrix(shape1, shape2, add_glorot=False, symmetric=False):
 class AnomalyDetector(tf.keras.Model):
     def __init__(
         self,
-        first_layer_size,
-        no_of_features,
-        middle_layer_size,
-        initialiser_key="straddled",
-        run_type="all_layers",
+        first_layer_size: int,
+        no_of_features: int,
+        middle_layer_size: int,
+        initialiser_key: str="straddled",
     ):
         super().__init__()
         if initialiser_key == "straddled":
@@ -170,27 +164,22 @@ class AnomalyDetector(tf.keras.Model):
                 ]
             )
 
-    def call(self, x):
-        encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
-        return decoded
-
-    def decoded_latent_space(self, x):
+    def decoded_latent_space(self, x: tf.Tensor) -> tf.Tensor:
         encoded = self.encoder.predict(x)
         decoded = self.decoder.predict(encoded)
         return decoded
 
 
 def train_autoencoder(
-    train_data_df,
-    test_data_df,
-    autoencoder_folder,
-    no_of_epochs=200,
-    learning_rate=0.0005,
-    nodesize=32,
-    initialiser="straddled",
-    run_type="all_layers",
-    batch_size=FULL_BATCH_SIZE,
+    train_data_df: pd.DataFrame,
+    test_data_df: pd.DataFrame,
+    autoencoder_folder: str,
+    no_of_epochs: int=200,
+    learning_rate: float=0.0005,
+    nodesize: int=32,
+    initialiser: str="straddled",
+    run_type: str="all_layers",
+    batch_size: int=FULL_BATCH_SIZE,
 ):
     """
     run_type options:
@@ -285,7 +274,10 @@ def train_autoencoder(
     return history
 
 
-def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
+def create_outputs_for_runs(list_of_runs: list,
+                            experiment_name: str,
+                            experiment_path: str,
+                            ):
     runs_dict = {}
     for filename in list_of_runs:
         runs_dict[filename] = pd.read_csv(experiment_path + filename)
@@ -308,25 +300,16 @@ def create_outputs_for_runs(list_of_runs, experiment_name, experiment_path):
     fig.savefig(f"{experiment_path}_experiment_{experiment_name}.png")
     plt.close()
 
-
-def run_autoencoder(autoencoder_folder, data):
-    no_of_features = data.shape[1]
-    autoencoder = AnomalyDetector(FIRST_LAYER_SIZE, no_of_features, 32, STRADDLED)
-    autoencoder.load_weights(f"{autoencoder_folder}model")
-
-    return autoencoder.predict(data)
-
-
 def run_experiments(
-    train,
-    test,
-    run_type,
-    experiment_path,
-    num_epochs,
-    lr,
-    middle_node_size,
-    batch_size=FULL_BATCH_SIZE,
-):
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    run_type: str,
+    experiment_path: str,
+    num_epochs: int,
+    lr: float,
+    middle_node_size: int,
+    batch_size: int=FULL_BATCH_SIZE,
+) -> list:
     train_data_df, test_data_df = train, test
 
     file = pathlib.Path(experiment_path)
@@ -350,7 +333,9 @@ def run_experiments(
     return run_histories
 
 
-def process_experiments(name="", experiment_path=""):
+def process_experiments(name: str="",
+                        experiment_path: str=""
+                        ):
     list_of_runs = []
     try:
         for key in INITIALISER_DICT:
