@@ -53,32 +53,12 @@ def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
         )
 
 
-def straddled_matrix(
-    shape1: int, shape2: int, add_glorot: bool = False, symmetric: bool = False
-) -> np.ndarray:
-    initializer = tf.keras.initializers.GlorotUniform()
-    glorot_uniform = initializer(shape=(shape1, shape2))
-
-    def tall_straddled(shape1: int, shape2: int) -> np.ndarray:
-        small_matrix = np.identity(shape2)
-        matrix = small_matrix
-        for i in range(ceil(shape1 / shape2)):
-            matrix = np.concatenate((matrix, small_matrix), axis=0)
-        return matrix[:shape1, :]
-
-    if symmetric:
-        if shape1 >= shape2:
-            straddled = tall_straddled(shape1, shape2)
-        else:
-            straddled = tall_straddled(shape2, shape1).T
-    else:
-        straddled = tall_straddled(shape1, shape2)
-
-    if add_glorot:
-        straddled += glorot_uniform
-        straddled = straddled.numpy()
-
-    return straddled
+def straddled_matrix(shape1: int, shape2: int) -> np.ndarray:
+    small_matrix = np.identity(shape2)
+    matrix = small_matrix
+    for i in range(ceil(shape1 / shape2)):
+        matrix = np.concatenate((matrix, small_matrix), axis=0)
+    return matrix[:shape1, :]
 
 
 class AnomalyDetector(tf.keras.Model):
