@@ -63,10 +63,9 @@ def prepare_synthetic_data(data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     return train, test
 
 
-def run_experiments_synthetic(num_epochs: int,
-                              lr: float,
-                              middle_node_size: int
-                              ) -> list:
+def run_experiments_synthetic(
+    num_epochs: int, lr: float, middle_node_size: int
+) -> list:
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
@@ -82,11 +81,8 @@ def run_experiments_synthetic(num_epochs: int,
 
     return histories
 
-def run_synthetic(seed: int,
-                  num_epochs: int,
-                  lr: float,
-                  middle_node_size: int
-                  ) -> list:
+
+def run_synthetic(seed: int, num_epochs: int, lr: float, middle_node_size: int) -> list:
     set_seeds(seed)
     run_histories = run_experiments_synthetic(num_epochs, lr, middle_node_size)
     return run_histories

@@ -24,12 +24,15 @@ INITIALISER_DICT = {
     "random": tf.keras.initializers.RandomNormal(),
 }
 
+
 def root_mean_squared_error(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     return K.sqrt(mean_squared_error(y_true, y_pred))
+
 
 def set_seeds(x: int):
     np.random.seed(x)
     tf.random.set_seed(x)
+
 
 def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
     if shape1 == shape2:
@@ -49,7 +52,10 @@ def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
             (matrix_without_zeroes, np.zeros((shape1, shape2 % shape1))), axis=1
         )
 
-def straddled_matrix(shape1: int, shape2: int, add_glorot: bool=False, symmetric: bool=False) -> np.ndarray:
+
+def straddled_matrix(
+    shape1: int, shape2: int, add_glorot: bool = False, symmetric: bool = False
+) -> np.ndarray:
     initializer = tf.keras.initializers.GlorotUniform()
     glorot_uniform = initializer(shape=(shape1, shape2))
 
@@ -81,7 +87,7 @@ class AnomalyDetector(tf.keras.Model):
         first_layer_size: int,
         no_of_features: int,
         middle_layer_size: int,
-        initialiser_key: str="straddled",
+        initialiser_key: str = "straddled",
     ):
         super().__init__()
         if initialiser_key == "straddled":
@@ -174,12 +180,12 @@ def train_autoencoder(
     train_data_df: pd.DataFrame,
     test_data_df: pd.DataFrame,
     autoencoder_folder: str,
-    no_of_epochs: int=200,
-    learning_rate: float=0.0005,
-    nodesize: int=32,
-    initialiser: str="straddled",
-    run_type: str="all_layers",
-    batch_size: int=FULL_BATCH_SIZE,
+    no_of_epochs: int = 200,
+    learning_rate: float = 0.0005,
+    nodesize: int = 32,
+    initialiser: str = "straddled",
+    run_type: str = "all_layers",
+    batch_size: int = FULL_BATCH_SIZE,
 ):
     """
     run_type options:
@@ -203,7 +209,7 @@ def train_autoencoder(
     run_name = f"{run_type}_{nodesize}node_{initialiser}_{learning_rate}lr_{no_of_epochs}epochs"
 
     autoencoder = AnomalyDetector(
-        FIRST_LAYER_SIZE, no_of_features, nodesize, initialiser, run_type
+        FIRST_LAYER_SIZE, no_of_features, nodesize, initialiser
     )
 
     optimizer = optimizers.SGD(learning_rate=learning_rate, momentum=0.0)
@@ -274,10 +280,11 @@ def train_autoencoder(
     return history
 
 
-def create_outputs_for_runs(list_of_runs: list,
-                            experiment_name: str,
-                            experiment_path: str,
-                            ):
+def create_outputs_for_runs(
+    list_of_runs: list,
+    experiment_name: str,
+    experiment_path: str,
+):
     runs_dict = {}
     for filename in list_of_runs:
         runs_dict[filename] = pd.read_csv(experiment_path + filename)
@@ -300,6 +307,7 @@ def create_outputs_for_runs(list_of_runs: list,
     fig.savefig(f"{experiment_path}_experiment_{experiment_name}.png")
     plt.close()
 
+
 def run_experiments(
     train: pd.DataFrame,
     test: pd.DataFrame,
@@ -308,7 +316,7 @@ def run_experiments(
     num_epochs: int,
     lr: float,
     middle_node_size: int,
-    batch_size: int=FULL_BATCH_SIZE,
+    batch_size: int = FULL_BATCH_SIZE,
 ) -> list:
     train_data_df, test_data_df = train, test
 
@@ -333,9 +341,7 @@ def run_experiments(
     return run_histories
 
 
-def process_experiments(name: str="",
-                        experiment_path: str=""
-                        ):
+def process_experiments(name: str = "", experiment_path: str = ""):
     list_of_runs = []
     try:
         for key in INITIALISER_DICT:

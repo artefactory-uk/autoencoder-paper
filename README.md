@@ -1,4 +1,4 @@
-# Autoencoder weight initialisation paper 
+# Autoencoder weight initialisation paper
 
 Training neural networks is a complex task with many interdependent hyper-parameters that each have to undergo a non-intuitive tuning
 process. Weight initialisation is generally overlooked in this process but
@@ -8,7 +8,7 @@ identity and show that when benchmarked with a simple autoencoder
 on various datasets that our initialiser outperforms the current state of
 the art as measured by both convergence time and loss reached.
 
-## Setup 
+## Setup
 
 ### Requirements
 
@@ -35,7 +35,7 @@ pip install -r requirements.txt
 - `MNIST`: availible via Keras
 - `Swarm Behaviour`: needs to be downloaded from [this](https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification) link and moved into `autoencoder-paper/resources/swarmBehaviour`.
 
-## Running the experiments 
+## Running the experiments
 Each experiment has a config file named `X_experiments_config.json`, where X is one of {swarm, mnist, synthetic} with the following format:
 
 ```json
@@ -51,7 +51,7 @@ Each experiment has a config file named `X_experiments_config.json`, where X is 
 
 }
 ```
-> Note: `num_tests` is the number of times the experiment is run with different random seeds. 
+> Note: `num_tests` is the number of times the experiment is run with different random seeds.
 
 To run the experiment for dataset `X` you run the following:
 ```bash
