@@ -2,7 +2,7 @@ from pickle import load, dump
 import pandas as pd
 
 
-def min_max_scaler(val, min_val, max_val):
+def min_max_scaler(val: float, min_val: float, max_val: float) -> float:
     out = (val - min_val) / (max_val - min_val)
     if (pd.isna(out)) & (val >= 1):
         out = 1
@@ -13,7 +13,9 @@ def min_max_scaler(val, min_val, max_val):
     return out
 
 
-def scale_dataset(df2, type, scale_location, rescale=False):
+def scale_dataset(
+    df2: pd.DataFrame, experiment_type: str, scale_location: str, rescale: bool = False
+) -> pd.DataFrame:
     # rescale rest of columns using minmax scaler (except in [])
     x_columns = [col for col in df2.columns.tolist() if col not in []]
 
@@ -35,13 +37,13 @@ def scale_dataset(df2, type, scale_location, rescale=False):
 
         dump(
             min_max_scaling_dict,
-            open(f"{scale_location}{type}_min_max_scaling_dict.pkl", "wb"),
+            open(f"{scale_location}{experiment_type}_min_max_scaling_dict.pkl", "wb"),
         )
         print(f"Saved new scaling dict")
     else:
         # apply previous scaling
         min_max_scaling_dict = load(
-            open(f"{scale_location}{type}_min_max_scaling_dict.pkl", "rb")
+            open(f"{scale_location}{experiment_type}_min_max_scaling_dict.pkl", "rb")
         )
 
         for col in x_columns:

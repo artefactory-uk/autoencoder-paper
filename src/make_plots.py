@@ -15,7 +15,7 @@ plt.rcParams.update({"font.size": 29})
 
 
 class MakePlots:
-    def __init__(self, experiment_name, file_name):
+    def __init__(self, experiment_name: str, file_name: str):
         self.file_name = file_name
         self.experiment_name = experiment_name
         self.save_path = PLOTS_EXPERIMENT_PATH + self.experiment_name + "/"
@@ -40,7 +40,7 @@ class MakePlots:
             "yellow",
         ]
 
-    def make_losses_dict(self, losses):
+    def make_losses_dict(self, losses: list) -> dict:
         epochs = {}
         for i in range(self.num_epochs):
             epochs[i] = []
@@ -48,16 +48,18 @@ class MakePlots:
                 epochs[i].append(losses[i + (self.num_epochs * j)])
         return epochs
 
-    def get_points_to_plot(self, key, val_losses):
-        epochs_key = self.make_losses_dict(val_losses[key][0])
+    def get_points_to_plot(
+        self, key: str, val_losses: dict
+    ) -> (list, list, list, list):
+        epochs_dict = self.make_losses_dict(val_losses[key][0])
         epochs_straddled = self.make_losses_dict(val_losses["straddled"][0])
-        key_lower, key_means, key_upper = self.CI.get_intervals(epochs_key)
+        key_lower, key_means, key_upper = self.CI.get_intervals(epochs_dict)
         straddled_lower, straddled_means, straddled_upper = self.CI.get_intervals(
             epochs_straddled
         )
         return key_means, straddled_means, key_lower, key_upper
 
-    def plot_all(self, epsilon, alpha):
+    def plot_all(self, epsilon: float, alpha: int) -> (pd.DataFrame, str):
         df = pd.DataFrame()
         converged_epochs, converged_losses = [], []
         plt.rcParams.update({"font.size": 45})
@@ -124,7 +126,9 @@ class MakePlots:
         )
 
     @staticmethod
-    def convergence_criteria(loss_curve, epsilon, num_epochs):
+    def convergence_criteria(
+        loss_curve: list, epsilon: float, num_epochs: int
+    ) -> (int, float):
         for cnt, epoch in enumerate(loss_curve):
             num_converged_epochs = 0
             for next_epoch in loss_curve[cnt:]:
@@ -135,9 +139,7 @@ class MakePlots:
                 else:
                     break
 
-        return False
-
-    def plot_dist_final_loss(self, second_best):
+    def plot_dist_final_loss(self, second_best: pd.DataFrame):
         """
         Plot the distribution of the final loss reached
         """
@@ -163,18 +165,18 @@ class MakePlots:
         fig.savefig(self.save_path + f"last_epoch_dist.png")
 
 
-def print_experiment_title(name):
+def print_experiment_title(name: str):
     delim = "-" * (len(name) * 2)
     space = " " * (len(name) // 2)
     print(f"{delim}\n{space}{name}\n{delim}\n")
 
 
-def print_experiment_subtitle(name):
+def print_experiment_subtitle(name: str):
     delim = "=" * (len(name) // 2)
     print(f"\n{delim} {name} {delim}\n")
 
 
-def display_experiment(title, dir_name, epsilon, alpha):
+def display_experiment(title: str, dir_name: str, epsilon: float, alpha: int):
     plots = MakePlots(dir_name, title)
     converged_df = plots.plot_all(epsilon=epsilon, alpha=alpha)
     print_experiment_title(dir_name)

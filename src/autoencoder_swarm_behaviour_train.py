@@ -6,7 +6,7 @@ from src.autoencoder_model import run_experiments, process_experiments, set_seed
 from src.paths import SWARM_DATA_PATH, SWARM_EXPERIMENT_PATH
 
 
-def load_swarm_data():
+def load_swarm_data() -> pd.DataFrame:
     """
     Dataset:
     https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification
@@ -23,7 +23,7 @@ def load_swarm_data():
     return swarm_df
 
 
-def run_swarm(seed, num_epochs, lr, middle_node_size):
+def run_swarm(seed: int, num_epochs: int, lr: float, middle_node_size: int) -> list:
     set_seeds(seed)
     swarm_data = load_swarm_data()
 

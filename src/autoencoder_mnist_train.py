@@ -5,7 +5,9 @@ from src.autoencoder_model import run_experiments, process_experiments, set_seed
 from src.paths import MNIST_EXPERIMENT_PATH
 
 
-def run_mnist(seed, num_epochs, lr, middle_node_size, sample_size=1):
+def run_mnist(
+    seed: int, num_epochs: int, lr: float, middle_node_size: int, sample_size: float = 1
+) -> list:
     """
     Simply replicating experiment from: https://blog.keras.io/building-autoencoders-in-keras.html
     """
