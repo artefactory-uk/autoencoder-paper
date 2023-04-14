@@ -7,8 +7,6 @@ from src.autoencoder_helper_functions import scale_dataset
 from src.autoencoder_model import (
     set_seeds,
     run_experiments,
-    INITIALISER_DICT,
-    create_outputs_for_runs,
 )
 
 FIRST_DIM = 20
@@ -80,20 +78,6 @@ def run_experiments_synthetic(num_epochs, lr, middle_node_size):
     )
 
     return histories
-
-
-def process_experiments_synthetic():
-    list_of_runs = []
-    for key in INITIALISER_DICT:
-        list_of_runs.append(
-            f"training_curves_synthetic_100_features_32node_{key}_0.001lr_50epochs.csv"
-        )
-    create_outputs_for_runs(
-        list_of_runs,
-        "different_initialisers_0p001lr_synthetic_100_features",
-        SYNTHETIC_EXPERIMENT_PATH,
-    )
-
 
 def run_synthetic(seed, num_epochs, lr, middle_node_size):
     set_seeds(seed)
