@@ -12,11 +12,8 @@ def load_swarm_data() -> pd.DataFrame:
     https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification
     """
     swarm_df = pd.read_csv(SWARM_DATA_PATH)
-    print(swarm_df.dtypes)
     cols_to_drop = ["Swarm_Behaviour"]
     swarm_df = swarm_df.drop(columns=cols_to_drop)
-    print(swarm_df.info())
-    print(swarm_df["xVel1"])
     scaler = MinMaxScaler()
     swarm_df = scaler.fit_transform(swarm_df)
 
