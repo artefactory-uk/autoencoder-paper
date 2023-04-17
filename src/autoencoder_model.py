@@ -9,6 +9,7 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.callbacks import LambdaCallback
 import pathlib
 
+from src.paths import LOGS_PATH
 
 FULL_BATCH_SIZE = 9999999
 FIRST_LAYER_SIZE = 64
@@ -201,7 +202,7 @@ def train_autoencoder(
     autoencoder.compile(optimizer=optimizer, loss=root_mean_squared_error)
 
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
-        log_dir="experiments/logs", write_grads=True, histogram_freq=1
+        log_dir=LOGS_PATH, write_grads=True, histogram_freq=1
     )
 
     LambdaCallback(
