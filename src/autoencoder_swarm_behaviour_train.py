@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.utils import shuffle
 from sklearn.preprocessing import MinMaxScaler
 
-from src.autoencoder_model import run_experiments, process_experiments, set_seeds
+from src.autoencoder_model import run_experiments, set_seeds
 from src.paths import SWARM_DATA_PATH, SWARM_EXPERIMENT_PATH
 
 
@@ -46,8 +46,6 @@ def run_swarm(seed: int, num_epochs: int, lr: float, middle_node_size: int) -> l
         lr=lr,
         middle_node_size=middle_node_size,
     )
-    file_name = "test_swarm"
-    process_experiments(name=file_name, experiment_path=SWARM_EXPERIMENT_PATH)
 
     return run_histories
 

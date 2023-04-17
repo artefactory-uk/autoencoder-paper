@@ -1,7 +1,7 @@
 import numpy as np
 from tensorflow.keras.datasets import mnist
 
-from src.autoencoder_model import run_experiments, process_experiments, set_seeds
+from src.autoencoder_model import run_experiments, set_seeds
 from src.paths import MNIST_EXPERIMENT_PATH
 
 
@@ -43,7 +43,6 @@ def run_mnist(
         batch_size=256,
         middle_node_size=middle_node_size,
     )
-    process_experiments(name="mnist", experiment_path=MNIST_EXPERIMENT_PATH)
 
     return run_histories
 

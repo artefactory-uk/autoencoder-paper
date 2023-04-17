@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from math import ceil
-import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.losses import mean_squared_error
@@ -221,77 +220,14 @@ def train_autoencoder(
         callbacks=[tensorboard_callback],
     )
 
-    plt.figure()
-    fig, ax = plt.subplots(1, 1)
-    plt.plot(history.history["loss"], label="Training Loss")
-    plt.plot(history.history["val_loss"], label="Validation Loss")
-    min_value = min(history.history["val_loss"])
-    min_index = history.history["val_loss"].index(min_value)
-    plt.title(
-        f"test loss: {round(min_value,3)}\ntrain loss: "
-        f"{round(history.history['loss'][min_index],3)}\nat epoch {min_index}"
-    )
-    plt.ylim(0, 0.3)
-    plt.legend()
-    plt.gcf().subplots_adjust(top=0.85)
-    fig.savefig(f"{autoencoder_folder}training_curves_{run_name}.png")
-    plt.close()
-
     hist_df = pd.DataFrame(history.history)
     hist_df.to_csv(f"{autoencoder_folder}training_curves_{run_name}.csv")
 
     autoencoder.save_weights(f"{autoencoder_folder}model_{run_name}")
 
     decoded_output = autoencoder.decoded_latent_space(test_data_original)
-    SHOW_MNIST_OUTPUT = False
-    if SHOW_MNIST_OUTPUT:
-        n = 10  # How many digits we will display
-        plt.figure(figsize=(20, 4))
-        for i in range(n):
-            # Display original
-            ax = plt.subplot(2, n, i + 1)
-            plt.imshow(test_data_original[i].reshape(28, 28))
-            plt.gray()
-            ax.get_xaxis().set_visible(False)
-            ax.get_yaxis().set_visible(False)
-
-            # Display reconstruction
-            ax = plt.subplot(2, n, i + 1 + n)
-            plt.imshow(decoded_output[i].reshape(28, 28))
-            plt.gray()
-            ax.get_xaxis().set_visible(False)
-            ax.get_yaxis().set_visible(False)
-        plt.show()
 
     return history
-
-
-def create_outputs_for_runs(
-    list_of_runs: list,
-    experiment_name: str,
-    experiment_path: str,
-):
-    runs_dict = {}
-    for filename in list_of_runs:
-        runs_dict[filename] = pd.read_csv(experiment_path + filename)
-
-    plt.figure()
-    fig, ax = plt.subplots(1, 1)
-    colors = ["b", "g", "r", "c", "m", "y", "k", "orange"]
-    for count, filename in enumerate(list_of_runs):
-        plt.plot(
-            runs_dict[filename]["loss"],
-            c=colors[count],
-            label="_".join(filename.split("_")[2:-1]),
-        )
-    for count, filename in enumerate(list_of_runs):
-        plt.plot(runs_dict[filename]["val_loss"], "--", c=colors[count])
-    plt.ylim(0, 0.08)
-    plt.legend(fontsize=8)
-    plt.title(experiment_name)
-    plt.gcf().subplots_adjust(top=0.85)
-    fig.savefig(f"{experiment_path}_experiment_{experiment_name}.png")
-    plt.close()
 
 
 def run_experiments(
@@ -325,51 +261,3 @@ def run_experiments(
         )
         run_histories.append((key, history))
     return run_histories
-
-
-def process_experiments(name: str = "", experiment_path: str = ""):
-    list_of_runs = []
-    try:
-        for key in INITIALISER_DICT:
-            list_of_runs.append(
-                f"training_curves_all_layers_32node_{key}_2000epochs.csv",
-            )
-        create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0001lr", experiment_path
-        )
-    except:
-        print("No 2000 epochs")
-
-    try:
-        list_of_runs = []
-        for key in INITIALISER_DICT:
-            list_of_runs.append(f"training_curves_fasterLR_32node_{key}_1000epochs.csv")
-        create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0002lr", experiment_path
-        )
-    except:
-        print("No 1000 epochs")
-
-    try:
-        list_of_runs = []
-        for key in INITIALISER_DICT:
-            list_of_runs.append(
-                f"training_curves_no_batching_32node_{key}_0.0005lr_200epochs.csv"
-            )
-        create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p0005lr", experiment_path
-        )
-    except:
-        print("No 200 epochs")
-
-    try:
-        list_of_runs = []
-        for key in INITIALISER_DICT:
-            list_of_runs.append(
-                f"training_curves_no_batching_32node_{key}_0.001lr_50epochs.csv"
-            )
-        create_outputs_for_runs(
-            list_of_runs, f"[{name}]different_initialisers_0p001lr", experiment_path
-        )
-    except:
-        print("No 50 epochs")
