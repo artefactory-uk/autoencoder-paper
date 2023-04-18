@@ -1,11 +1,13 @@
 import numpy as np
 from tensorflow.keras.datasets import mnist
 
-from src.autoencoder_model import run_experiments, process_experiments, set_seeds
+from src.autoencoder_model import run_experiments, set_seeds
 from src.paths import MNIST_EXPERIMENT_PATH
 
 
-def run_mnist(seed, num_epochs, lr, middle_node_size, sample_size=1):
+def run_mnist(
+    seed: int, num_epochs: int, lr: float, middle_node_size: int, sample_size: float = 1
+) -> list:
     """
     Simply replicating experiment from: https://blog.keras.io/building-autoencoders-in-keras.html
     """
@@ -41,7 +43,6 @@ def run_mnist(seed, num_epochs, lr, middle_node_size, sample_size=1):
         batch_size=256,
         middle_node_size=middle_node_size,
     )
-    process_experiments(name="mnist", experiment_path=MNIST_EXPERIMENT_PATH)
 
     return run_histories
 

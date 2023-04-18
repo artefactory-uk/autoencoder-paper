@@ -7,11 +7,10 @@ experiments
 # If you use a different one remember to add it to this file
 _venv
 
-# MacOS specific
+# MacOS specific files
 .DS_Store
 
 # Data files.
-# Must be version controlled in DVC.
 *.csv
 *.png
 *.geojson

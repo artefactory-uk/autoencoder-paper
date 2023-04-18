@@ -7,8 +7,6 @@ from src.autoencoder_helper_functions import scale_dataset
 from src.autoencoder_model import (
     set_seeds,
     run_experiments,
-    INITIALISER_DICT,
-    create_outputs_for_runs,
 )
 
 FIRST_DIM = 20
@@ -16,7 +14,7 @@ FINAL_DIM = 100
 DATASET_SIZE = 5000
 
 
-def transform_vector(input_vector):
+def transform_vector(input_vector: np.ndarray) -> np.ndarray:
     prng2 = np.random.RandomState(2019)
     unfolded_vector = np.repeat(input_vector, repeats=FINAL_DIM, axis=0)
     possible_funcs = [
@@ -45,7 +43,7 @@ def transform_vector(input_vector):
     return transformed_values_vector
 
 
-def create_synthetic_data():
+def create_synthetic_data() -> pd.DataFrame:
     prng = np.random.RandomState(50)
     dataset = np.empty((FINAL_DIM, 0), int)
     for i in range(DATASET_SIZE):
@@ -57,7 +55,7 @@ def create_synthetic_data():
     return pd.DataFrame.from_records(dataset)
 
 
-def prepare_synthetic_data(data):
+def prepare_synthetic_data(data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     scaled_data = scale_dataset(
         data, "autoencoder_synthetic", SYNTHETIC_EXPERIMENT_PATH, rescale=True
     )
@@ -65,7 +63,9 @@ def prepare_synthetic_data(data):
     return train, test
 
 
-def run_experiments_synthetic(num_epochs, lr, middle_node_size):
+def run_experiments_synthetic(
+    num_epochs: int, lr: float, middle_node_size: int
+) -> list:
     run_type = "synthetic_100_features"
     dataset = create_synthetic_data()
     train_data_df, test_data_df = prepare_synthetic_data(dataset)
@@ -82,20 +82,7 @@ def run_experiments_synthetic(num_epochs, lr, middle_node_size):
     return histories
 
 
-def process_experiments_synthetic():
-    list_of_runs = []
-    for key in INITIALISER_DICT:
-        list_of_runs.append(
-            f"training_curves_synthetic_100_features_32node_{key}_0.001lr_50epochs.csv"
-        )
-    create_outputs_for_runs(
-        list_of_runs,
-        "different_initialisers_0p001lr_synthetic_100_features",
-        SYNTHETIC_EXPERIMENT_PATH,
-    )
-
-
-def run_synthetic(seed, num_epochs, lr, middle_node_size):
+def run_synthetic(seed: int, num_epochs: int, lr: float, middle_node_size: int) -> list:
     set_seeds(seed)
     run_histories = run_experiments_synthetic(num_epochs, lr, middle_node_size)
     return run_histories

@@ -15,7 +15,7 @@ plt.rcParams.update({"font.size": 29})
 
 
 class MakePlots:
-    def __init__(self, experiment_name, file_name):
+    def __init__(self, experiment_name: str, file_name: str):
         self.file_name = file_name
         self.experiment_name = experiment_name
         self.save_path = PLOTS_EXPERIMENT_PATH + self.experiment_name + "/"
@@ -40,7 +40,7 @@ class MakePlots:
             "yellow",
         ]
 
-    def make_losses_dict(self, losses):
+    def make_losses_dict(self, losses: list) -> dict:
         epochs = {}
         for i in range(self.num_epochs):
             epochs[i] = []
@@ -48,56 +48,18 @@ class MakePlots:
                 epochs[i].append(losses[i + (self.num_epochs * j)])
         return epochs
 
-    def get_points_to_plot(self, key, val_losses):
-        epochs_key = self.make_losses_dict(val_losses[key][0])
+    def get_points_to_plot(
+        self, key: str, val_losses: dict
+    ) -> (list, list, list, list):
+        epochs_dict = self.make_losses_dict(val_losses[key][0])
         epochs_straddled = self.make_losses_dict(val_losses["straddled"][0])
-        key_lower, key_means, key_upper = self.CI.get_intervals(epochs_key)
+        key_lower, key_means, key_upper = self.CI.get_intervals(epochs_dict)
         straddled_lower, straddled_means, straddled_upper = self.CI.get_intervals(
             epochs_straddled
         )
         return key_means, straddled_means, key_lower, key_upper
 
-    def plot_epochs(self, axs, losses, name):
-        first_epochs, last_epochs = [], []
-        for cnt, key in enumerate(losses.keys()):
-            all_losses = losses[key][0]
-            epochs = self.make_losses_dict(all_losses)
-
-            all_lower, all_means, all_upper = self.CI.get_intervals(epochs)
-
-            # for plotting
-            first_epochs.append(epochs[0])
-            last_epochs.append(epochs[self.num_epochs - 1])
-
-            axs[cnt].plot(self.epochs_list, all_means, label=name)
-            axs[cnt].fill_between(self.epochs_list, all_lower, all_upper, alpha=0.2)
-            axs[cnt].set_title(f"{key}")
-            # Plot lowest point
-            lowest = min(zip(np.round(all_means, 3), self.epochs_list))
-            lowest_loss, lowest_epoch = lowest[0], lowest[1]
-
-            if name == "train loss":
-                color = "blue"
-            else:
-                color = "orange"
-
-            axs[cnt].scatter(lowest_epoch, lowest_loss, color=color, s=90)
-            axs[cnt].axhline(
-                y=lowest_loss,
-                linestyle="--",
-                color=color,
-                label=f"Lowest point ({name}) = {round(lowest_loss,3)} at epoch {lowest_epoch}",
-            )
-
-            axs[cnt].set_xlabel("Epoch")
-            axs[cnt].set_ylabel("Loss")
-
-        # Reset axis
-        y_max, y_min = np.max(first_epochs), np.min(last_epochs)
-        for cnt, _ in enumerate(losses.keys()):
-            axs[cnt].set_ylim((y_min - (0.04 * y_min), y_max + (0.01 * y_max)))
-
-    def plot_all(self, epsilon, alpha):
+    def plot_all(self, epsilon: float, alpha: int) -> (pd.DataFrame, str):
         df = pd.DataFrame()
         converged_epochs, converged_losses = [], []
         plt.rcParams.update({"font.size": 45})
@@ -118,13 +80,13 @@ class MakePlots:
             )
             axs.fill_between(
                 self.epochs_list,
-                (key_low_val),
-                (key_high_val),
+                key_low_val,
+                key_high_val,
                 color=self.color_map[cnt],
                 alpha=0.1,
             )
 
-            if converged_points != False:
+            if converged_points:
                 converged_epoch, converged_loss = (
                     converged_points[0],
                     converged_points[1],
@@ -163,69 +125,21 @@ class MakePlots:
             df.to_latex(index=False, label=f"{self.experiment_name} all initialisers"),
         )
 
-    def pair_plot_epochs(self):
-        for cnt, key in enumerate(self.val_losses.keys()):
-            fig, axs = plt.subplots(1, 1, figsize=(30, 30))
-
-            key_means_train, straddled_means_train, *_ = self.get_points_to_plot(
-                key, self.train_losses
-            )
-            key_means_val, straddled_means_val, *_ = self.get_points_to_plot(
-                key, self.val_losses
-            )
-
-            axs.plot(
-                self.epochs_list, key_means_train, label=key + " train", color="blue"
-            )
-            axs.plot(
-                self.epochs_list,
-                key_means_val,
-                label=key + " validation",
-                color="blue",
-                linestyle="dashed",
-            )
-
-            axs.plot(
-                self.epochs_list,
-                straddled_means_train,
-                label="straddled train",
-                color="red",
-            )
-            axs.plot(
-                self.epochs_list,
-                straddled_means_val,
-                label="straddled validation",
-                color="red",
-                linestyle="dashed",
-            )
-
-            axs.legend(loc="upper right")
-            axs.set_title(f"Straddled + {key}\n{self.file_name}")
-
-            axs.set_xlabel("Epoch")
-            axs.set_ylabel("Loss")
-            fig.savefig(
-                PLOTS_EXPERIMENT_PATH
-                + self.save_path
-                + f"straddled_{key}_"
-                + self.file_name
-                + ".png"
-            )
-
-    def convergence_criteria(self, loss_curve, epsilon, num_epochs):
+    @staticmethod
+    def convergence_criteria(
+        loss_curve: list, epsilon: float, num_epochs: int
+    ) -> (int, float):
         for cnt, epoch in enumerate(loss_curve):
             num_converged_epochs = 0
             for next_epoch in loss_curve[cnt:]:
-                if next_epoch <= (epoch + epsilon) and next_epoch >= (epoch - epsilon):
+                if (epoch + epsilon) >= next_epoch >= (epoch - epsilon):
                     num_converged_epochs += 1
                     if num_converged_epochs >= num_epochs:
                         return cnt + 1, epoch
                 else:
                     break
 
-        return False
-
-    def plot_dist_final_loss(self, second_best):
+    def plot_dist_final_loss(self, second_best: pd.DataFrame):
         """
         Plot the distribution of the final loss reached
         """
@@ -251,18 +165,18 @@ class MakePlots:
         fig.savefig(self.save_path + f"last_epoch_dist.png")
 
 
-def print_experiment_title(name):
+def print_experiment_title(name: str):
     delim = "-" * (len(name) * 2)
     space = " " * (len(name) // 2)
     print(f"{delim}\n{space}{name}\n{delim}\n")
 
 
-def print_experiment_subtitle(name):
+def print_experiment_subtitle(name: str):
     delim = "=" * (len(name) // 2)
     print(f"\n{delim} {name} {delim}\n")
 
 
-def display_experiment(title, dir_name, epsilon, alpha):
+def display_experiment(title: str, dir_name: str, epsilon: float, alpha: int):
     plots = MakePlots(dir_name, title)
     converged_df = plots.plot_all(epsilon=epsilon, alpha=alpha)
     print_experiment_title(dir_name)
@@ -276,7 +190,6 @@ def display_experiment(title, dir_name, epsilon, alpha):
 
 if __name__ == "__main__":
     plot_synthetic, plot_swarm, plot_mnist = True, True, True
-    spacer = "-" * 20
 
     if plot_synthetic:
         display_experiment(
