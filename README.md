@@ -15,6 +15,8 @@ the art as measured by both convergence time and loss reached.
 
 The Straddled Matrix is a modification of the standard identity matrix where the zero padding is replaced by diagonally filling all rows. This ensures that every feature in the dataset receives equal weight, regardless of the network architecture.
 
+<img src="https://user-images.githubusercontent.com/67425173/232788168-2af1cd9d-562f-4aa5-aad0-08e0fec9e3d3.jpg"  width=50% height=50%>
+
 The Straddled Matrix is defined simply by the function `straddled_matrix()` in [autoencoder_model.py](src/autoencoder_model.py).
 
 
@@ -74,4 +76,6 @@ Once the experiments have been run, generate the figures and tables that appear 
 python make_plots.py
 ```
 
-#### E.g.: figure for synthetic data experiment
+#### E.g.: figure for synthetic data experiment!
+
+<img src="https://user-images.githubusercontent.com/67425173/232788521-6431ac29-27bc-4b16-8301-3a1aa884fcf1.jpeg"  width=50% height=50%>
