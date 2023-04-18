@@ -25,13 +25,12 @@ INITIALISER_DICT = {
 }
 
 
-def root_mean_squared_error(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
-    return K.sqrt(mean_squared_error(y_true, y_pred))
-
-
-def set_seeds(x: int):
-    np.random.seed(x)
-    tf.random.set_seed(x)
+def straddled_matrix(shape1: int, shape2: int) -> np.ndarray:
+    small_matrix = np.identity(shape2)
+    matrix = small_matrix
+    for i in range(ceil(shape1 / shape2)):
+        matrix = np.concatenate((matrix, small_matrix), axis=0)
+    return matrix[:shape1, :]
 
 
 def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
@@ -53,12 +52,13 @@ def recurrent_identity_matrix(shape1: int, shape2: int) -> np.ndarray:
         )
 
 
-def straddled_matrix(shape1: int, shape2: int) -> np.ndarray:
-    small_matrix = np.identity(shape2)
-    matrix = small_matrix
-    for i in range(ceil(shape1 / shape2)):
-        matrix = np.concatenate((matrix, small_matrix), axis=0)
-    return matrix[:shape1, :]
+def root_mean_squared_error(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
+    return K.sqrt(mean_squared_error(y_true, y_pred))
+
+
+def set_seeds(x: int):
+    np.random.seed(x)
+    tf.random.set_seed(x)
 
 
 class AnomalyDetector(tf.keras.Model):
