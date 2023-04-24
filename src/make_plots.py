@@ -5,9 +5,10 @@ from matplotlib import rc
 import seaborn as sns
 import numpy as np
 import pandas as pd
+import json
 from scipy import stats
 
-from src.paths import PLOTS_EXPERIMENT_PATH
+from src.paths import PLOTS_EXPERIMENT_PATH, SOURCE_PATH
 import experiment_scripts.helpers as helpers
 
 rc("font", **{"family": "serif", "serif": ["Founders Grotesk"]})
@@ -190,11 +191,32 @@ def display_experiment(title: str, dir_name: str, epsilon: float, alpha: int):
 
 if __name__ == "__main__":
     plot_synthetic, plot_swarm, plot_mnist = True, True, True
+    file_path_synthetic = (
+        f"{SOURCE_PATH}/experiment_scripts/synthetic_experiments_config.json"
+    )
+    file_path_swarm = f"{SOURCE_PATH}/experiment_scripts/swarm_experiments_config.json"
+    file_path_mnist = f"{SOURCE_PATH}/experiment_scripts/mnist_experiments_config.json"
+
+    with open(file_path_synthetic) as config_file:
+        all_experiments = json.load(config_file)
+        experiment_details = all_experiments["Synthetic Experiment"][0]
+        num_epochs_synthetic = experiment_details["num_epochs"]
+        num_runs_synthetic = experiment_details["num_tests"]
+    with open(file_path_swarm) as config_file:
+        all_experiments = json.load(config_file)
+        experiment_details = all_experiments["Swarm Experiment"][0]
+        num_epochs_swarm = experiment_details["num_epochs"]
+        num_runs_swarm = experiment_details["num_tests"]
+    with open(file_path_mnist) as config_file:
+        all_experiments = json.load(config_file)
+        experiment_details = all_experiments["MNIST Experiment"][0]
+        num_epochs_mnist = experiment_details["num_epochs"]
+        num_runs_mnist = experiment_details["num_tests"]
 
     if plot_synthetic:
         display_experiment(
-            title="Synthetic Experiment[Straddled type = asymmetric | Num. Epochs = 1000 | "
-            "Learning rate = 0.1 | Num. runs = 10]",
+            title=f"Synthetic Experiment[Straddled type = asymmetric | Num. Epochs = {num_epochs_synthetic} | "
+            f"Learning rate = 0.1 | Num. runs = {num_runs_synthetic}]",
             dir_name="Synthetic Experiment",
             epsilon=0.001,
             alpha=100,
@@ -202,8 +224,8 @@ if __name__ == "__main__":
 
     if plot_swarm:
         display_experiment(
-            title="Swarm Experiment[Straddled type = asymmetric | "
-            "Num. Epochs = 1500 | Learning rate = 0.1 | Num. runs = 10]",
+            title=f"Swarm Experiment[Straddled type = asymmetric | "
+            f"Num. Epochs = {num_epochs_swarm} | Learning rate = 0.1 | Num. runs = {num_runs_swarm}]",
             dir_name="Swarm Experiment",
             epsilon=0.005,
             alpha=500,
@@ -211,8 +233,8 @@ if __name__ == "__main__":
 
     if plot_mnist:
         display_experiment(
-            title="MNIST Experiment[Straddled type = asymmetric | Num. Epochs = 1000 | "
-            "Learning rate = 0.1 | Num. runs = 10]",
+            title=f"MNIST Experiment[Straddled type = asymmetric | Num. Epochs = {num_epochs_mnist} | "
+            f"Learning rate = 0.1 | Num. runs = {num_runs_mnist}]",
             dir_name="MNIST Experiment",
             epsilon=0.005,
             alpha=250,

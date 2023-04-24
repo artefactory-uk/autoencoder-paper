@@ -48,6 +48,11 @@ pip install -r requirements.txt
 - `Swarm Behaviour`: can be downloaded from [here](https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification), and then copied to `autoencoder-paper/resources/swarmBehaviour`.
 
 ## 🚀 Running the experiments
+To run all the experiments please run the following command
+```bash
+bash run.sh
+```
+
 Each experiment presented in the paper has a config file named `X_experiments_config.json`, where X is one of {swarm, mnist, synthetic} with the following format:
 
 ```json
@@ -64,17 +69,12 @@ Each experiment presented in the paper has a config file named `X_experiments_co
 ```
 Note: `num_tests` is the number of times the experiment is run with different random seeds.
 
-To run the experiment for dataset `X` run the following:
-```bash
-python experiment_scripts/X_experiments.py
-```
 
 ## 📊 Plots and tables
 
-Once the experiments have been run, generate the figures and tables that appear in the paper by running:
-```shell
-python make_plots.py
-```
+All the figures and tables that appear in the paper are generated inside folder `experiments/plots`.
+These were generated after running `run.sh` sript via `make_plots.py` file.
+
 
 #### E.g.: figure for synthetic data experiment!
 
