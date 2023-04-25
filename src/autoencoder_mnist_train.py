@@ -29,7 +29,7 @@ def run_mnist(
             all_data.shape[0], amount_of_data, replace=False
         )
         x_train = all_data[training_indices]
-        test_mask = np.ones(len(all_data), np.bool)
+        test_mask = np.ones(len(all_data), np.bool_)
         test_mask[training_indices] = 0
         x_test = all_data[test_mask]
 
