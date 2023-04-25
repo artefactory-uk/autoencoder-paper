@@ -22,7 +22,7 @@ The Straddled Matrix is defined simply by the function `straddled_matrix()` in [
 
 ## 🚀 What can this help with?
 
-If you are looking for an alternative weight initilisation to improve the performance of your autoencoder, then this is for you! Designed for mostly linear datasets, but also works well with high amounts of non-linearity.
+If you are looking for an alternative weight initialisation to improve the performance of your autoencoder, then this is for you! Designed for mostly linear datasets, but also works well with high amounts of non-linearity.
 
 ## 🌲 Environment Setup
 
@@ -44,11 +44,11 @@ pip install -r requirements.txt
 ## 📚 Datasets used
 
 - `Synthetic`: created locally
-- `MNIST`: availible via Keras
+- `MNIST`: available via Keras
 - `Swarm Behaviour`: can be downloaded from [here](https://www.kaggle.com/datasets/deepcontractor/swarm-behaviour-classification), and then copied to `autoencoder-paper/resources/swarmBehaviour`.
 
 ## 🚀 Running the experiments
-To run all the experiments please run the following command
+To run all the experiments run the following command:
 ```bash
 bash run.sh
 ```
@@ -67,13 +67,13 @@ Each experiment presented in the paper has a config file named `X_experiments_co
   ]
 }
 ```
-Note: `num_tests` is the number of times the experiment is run with different random seeds.
+Note: `num_tests` is the number of times the experiment is run with different random seeds. The MNIST and Swarm Behaviour experiments take a significant time. Consider reducing `num_tests` if you only want to test the experiments.
 
 
 ## 📊 Plots and tables
 
-All the figures and tables that appear in the paper are generated inside folder `experiments/plots`.
-These were generated after running `run.sh` sript via `make_plots.py` file.
+All the figures and tables that appear in the paper are generated inside the folder `experiments/plots`.
+These are generated after running `make_plots.py` via the  `run.sh` bash script.
 
 
 #### E.g.: figure for synthetic data experiment!
